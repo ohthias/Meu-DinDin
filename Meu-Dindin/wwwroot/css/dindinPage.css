@@ -1,0 +1,196 @@
+/* ─── DINDIN PAGE ─── */
+.xp-bar-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 22px;
+  margin-bottom: 24px;
+}
+.xp-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.xp-level {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--accent2);
+}
+.xp-count { font-size: .82rem; color: var(--text2); }
+.xp-bar-track {
+  background: var(--surface2);
+  border-radius: 20px;
+  height: 12px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.xp-bar-fill {
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  transition: width 1s ease;
+}
+.xp-bar-tip { font-size: .75rem; color: var(--text2); margin-top: 6px; }
+
+/* ─── CHALLENGE ─── */
+.challenge-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 20px;
+  transition: border-color .2s;
+}
+.challenge-card:hover { border-color: var(--accent5); }
+.challenge-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.challenge-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .9rem;
+}
+.challenge-xp {
+  font-size: .72rem;
+  background: rgba(167,139,250,.12);
+  color: var(--accent5);
+  border: 1px solid rgba(167,139,250,.25);
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+.challenge-desc { font-size: .82rem; color: var(--text2); margin-bottom: 14px; line-height: 1.55; }
+.challenge-progress-row { display: flex; justify-content: space-between; margin-bottom: 5px; align-items: center; }
+.challenge-progress-label { font-size: .75rem; color: var(--text2); }
+.challenge-progress-val { font-size: .75rem; font-weight: 700; color: var(--text); }
+.progress-track {
+  background: var(--surface2);
+  border-radius: 20px;
+  height: 8px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, var(--accent5), var(--accent4));
+  transition: width .8s ease;
+}
+.challenge-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: .78rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ─── ACHIEVEMENT ─── */
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+}
+.achievement {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 14px;
+  text-align: center;
+  transition: all .2s;
+}
+.achievement.unlocked { border-color: rgba(245,158,11,.3); background: rgba(245,158,11,.04); }
+.achievement.locked { opacity: .45; filter: grayscale(1); }
+.achievement:hover.unlocked { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,158,11,.12); }
+.achievement-icon { font-size: 2rem; margin-bottom: 8px; }
+.achievement-name { font-size: .72rem; font-weight: 700; font-family: var(--font-display); color: var(--text2); }
+.achievement-name.unlocked-text { color: var(--accent2); }
+
+/* ─── TOAST ─── */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+  pointer-events: none;
+}
+.toast {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .88rem;
+  font-weight: 500;
+  animation: toastIn .3s ease both, toastOut .3s ease 3s both;
+  pointer-events: all;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  max-width: 320px;
+}
+.toast.success { border-color: rgba(110,231,183,.3); }
+.toast.xp      { border-color: rgba(245,158,11,.3); }
+@keyframes toastIn  { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+@keyframes toastOut { from { opacity:1; } to { opacity:0; transform: translateX(20px); } }
+
+/* ─── EMPTY STATE ─── */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text3);
+}
+.empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+.empty-state p { font-size: .88rem; }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  width: min(400px, 90vw);
+  animation: fadeUp .3s ease;
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+}
+.modal-actions { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
+.btn-cancel {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-family: var(--font-body);
+  font-size: .88rem;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-cancel:hover { border-color: var(--text2); color: var(--text); }
+.btn-confirm {
+  background: linear-gradient(135deg, var(--accent4), var(--accent5));
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: .88rem;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.btn-confirm:hover { opacity: .85; }

@@ -19,12 +19,8 @@
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/rjimswa.dswa.cache.json
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/rjsmrazor.dswa.cache.json
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/rjsmcshtml.dswa.cache.json
-/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/scopedcss/Pages/Shared/_Layout.cshtml.rz.scp.css
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/scopedcss/bundle/Meu-Dindin.styles.css
-/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/scopedcss/projectbundle/Meu-Dindin.bundle.scp.css
-/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/9v2td4iqhx-{0}-b9sayid5wm-b9sayid5wm.gz
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/c08h0wk2kc-{0}-61n19gt1b8-61n19gt1b8.gz
-/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/umuy66bt22-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/8j942gamyc-{0}-bqjiyaj88i-bqjiyaj88i.gz
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/kgdbqcngm5-{0}-c2jlpeoesf-c2jlpeoesf.gz
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/2zswt5oer4-{0}-erw9l3u2r3-erw9l3u2r3.gz
@@ -84,8 +80,6 @@
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/e6jn7d6wby-{0}-muycvpuwrr-muycvpuwrr.gz
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/x87tpqda88-{0}-87fc7y1x7t-87fc7y1x7t.gz
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/8naed58m1i-{0}-mlv21k5csn-mlv21k5csn.gz
-/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/qagv2501ku-{0}-kaz2rkzptu-kaz2rkzptu.gz
-/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/5194ofy3oe-{0}-kaz2rkzptu-kaz2rkzptu.gz
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/staticwebassets.build.json
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/staticwebassets.build.json.cache
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/staticwebassets.development.json
@@ -96,3 +90,15 @@
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/Meu-Dindin.pdb
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/Meu-Dindin.genruntimeconfig.cache
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/ref/Meu-Dindin.dll
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/ul7x678sy8-{0}-1zk6ua2jw0-1zk6ua2jw0.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/4o5or0y2lq-{0}-4at51vs6o9-4at51vs6o9.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/v9y7jiibzd-{0}-ftdcxvgywa-ftdcxvgywa.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/x5tx7b6vom-{0}-hvzytvlwy1-hvzytvlwy1.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/9516z1p8mj-{0}-hnd55cyvio-hnd55cyvio.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/jjcqu7lw4m-{0}-x0yl8jlak6-x0yl8jlak6.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/4kb9dzfqwe-{0}-um412c4i4d-um412c4i4d.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/fkulekco9l-{0}-ntbnkd1s9l-ntbnkd1s9l.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/j4ne0jwvhh-{0}-31z11r15cd-31z11r15cd.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/m82wpuirqx-{0}-85dk12kazn-85dk12kazn.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/odepnnr36o-{0}-qxxzxfrnp3-qxxzxfrnp3.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/xnlmgvd5s2-{0}-uvfcrfwijb-uvfcrfwijb.gz

@@ -1,0 +1,324 @@
+@page
+@model DashboardModel
+@{
+    ViewData["Title"] = "Meu Dindin";
+}
+
+<link rel="stylesheet" href="~/css/root.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/mainPage.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/investPage.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/dindinPage.css" asp-append-version="true" />
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="~/js/dashboard.js" asp-append-version="true" defer></script>
+
+<div id="app" aria-label="Aplicativo Meu Dindin">
+    <header role="banner">
+        <div class="header-logo" aria-label="Meu Dindin">💸 Meu Dindin</div>
+
+        <div style="display:flex;align-items:center;gap:12px;">
+            <div class="user-badge" aria-label="Perfil do usuário">
+                <div class="user-avatar" id="user-avatar" aria-hidden="true">A</div>
+                <div class="user-xp" aria-live="polite">
+                    Nível <strong id="user-level">1</strong> ·
+                    <strong id="user-xp-count">0</strong> XP
+                </div>
+            </div>
+
+            <form method="post" asp-page-handler="Logout" style="margin:0;">
+                <button type="submit"
+                        class="logout-btn"
+                        aria-label="Sair da conta">
+                    Sair
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <nav role="tablist" aria-label="Navegação principal">
+        <button class="nav-tab active"
+                onclick="switchPage('dashboard', this)"
+                role="tab"
+                aria-selected="true"
+                aria-controls="page-dashboard"
+                id="tab-dashboard">
+            📊 Dashboard
+        </button>
+
+        <button class="nav-tab"
+                onclick="switchPage('investir', this)"
+                role="tab"
+                aria-selected="false"
+                aria-controls="page-investir"
+                id="tab-investir">
+            📈 Investir
+        </button>
+
+        <button class="nav-tab"
+                onclick="switchPage('dindin', this)"
+                role="tab"
+                aria-selected="false"
+                aria-controls="page-dindin"
+                id="tab-dindin">
+            🏆 Dindin
+        </button>
+    </nav>
+
+    <main id="main-content" tabindex="-1">
+
+        <!-- DASHBOARD -->
+        <section id="page-dashboard"
+                 class="page active"
+                 role="tabpanel"
+                 aria-labelledby="tab-dashboard">
+
+            <h2 class="section-title">
+                Olá, <span id="greeting-name">@Model.PrimeiroNome</span> 👋
+            </h2>
+
+            <p class="section-sub" id="rec-sub">
+                Veja como seu dinheiro está indo este mês
+            </p>
+
+            <!-- Summary cards -->
+            <div class="grid-4" role="region" aria-label="Resumo financeiro">
+                <article class="card">
+                    <div class="card-title">Saldo</div>
+                    <div class="card-value green" id="val-balance">R$ 0,00</div>
+                    <div class="card-delta" id="delta-balance"></div>
+                </article>
+
+                <article class="card">
+                    <div class="card-title">Receitas</div>
+                    <div class="card-value blue" id="val-income">R$ 0,00</div>
+                </article>
+
+                <article class="card">
+                    <div class="card-title">Gastos</div>
+                    <div class="card-value red" id="val-expense">R$ 0,00</div>
+                </article>
+
+                <article class="card">
+                    <div class="card-title">Meta Poupança</div>
+                    <div class="card-value yellow" id="val-saving">20%</div>
+                    <div class="card-delta" id="delta-saving"></div>
+                </article>
+            </div>
+
+            <div class="rec-card mt-24">
+                <div class="rec-label">💡 Recomendação para você</div>
+                <div class="rec-text" id="rec-text">
+                    Adicione suas transações para receber dicas personalizadas!
+                </div>
+            </div>
+
+            <!-- Nova transação -->
+            <div class="add-transaction-card mt-24">
+                <h3>➕ Nova transação</h3>
+
+                <div class="type-toggle">
+                    <button class="type-btn active-income"
+                            id="btn-income"
+                            onclick="setType('income')">
+                        💚 Receita
+                    </button>
+
+                    <button class="type-btn"
+                            id="btn-expense"
+                            onclick="setType('expense')">
+                        🔴 Gasto
+                    </button>
+                </div>
+
+                <div class="form-row">
+                    <input class="inp"
+                           id="tx-desc"
+                           type="text"
+                           placeholder="Descrição (ex: Freela)" />
+
+                    <input class="inp"
+                           id="tx-value"
+                           type="number"
+                           placeholder="Valor (R$)"
+                           min="0"
+                           step="0.01" />
+                </div>
+
+                <div class="form-row">
+                    <input class="inp" id="tx-date" type="date" />
+
+                    <select class="inp" id="tx-recur">
+                        <option value="once">Sem recorrência</option>
+                        <option value="monthly">Mensal</option>
+                        <option value="weekly">Semanal</option>
+                    </select>
+                </div>
+
+                <div>
+                    <p style="font-size:.78rem;color:var(--text2);margin-bottom:8px;font-weight:600;">
+                        CATEGORIA
+                    </p>
+                    <div class="tag-row" id="tag-row"></div>
+                </div>
+
+                <button class="btn-add mt-8"
+                        onclick="addTransaction()">
+                    Adicionar transação
+                </button>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="grid-2 mt-24">
+                <div class="chart-card">
+                    <div class="chart-title">Receitas × Gastos</div>
+                    <div class="chart-container">
+                        <canvas id="chart-bar"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Gastos por categoria</div>
+                    <div class="chart-container">
+                        <canvas id="chart-donut"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Histórico -->
+            <div class="mt-24">
+                <h3>Histórico recente</h3>
+
+                <select class="inp"
+                        id="filter-cat"
+                        onchange="renderTransactions()">
+                    <option value="all">Todas categorias</option>
+                </select>
+
+                <div class="tx-list" id="tx-list"></div>
+            </div>
+        </section>
+
+        <!-- INVESTIR -->
+        <section id="page-investir"
+                 class="page"
+                 role="tabpanel"
+                 aria-labelledby="tab-investir">
+            <h2 class="section-title">Investir 📈</h2>
+            <p class="section-sub">
+                Aprenda e comece a fazer seu dinheiro trabalhar por você
+            </p>
+
+            <div class="grid-2" id="invest-tips"></div>
+            <hr class="divider" />
+            <div class="grid-3" id="invest-products"></div>
+
+            <hr class="divider" />
+
+            <div class="my-invest-form">
+                <h3>Registrar investimento</h3>
+
+                <div class="form-row">
+                    <input class="inp"
+                           id="inv-name"
+                           type="text"
+                           placeholder="Ex: Tesouro Selic" />
+
+                    <input class="inp"
+                           id="inv-value"
+                           type="number"
+                           placeholder="Valor (R$)"
+                           min="0"
+                           step="0.01" />
+                </div>
+
+                <div class="form-row">
+                    <select class="inp" id="inv-type">
+                        <option>Renda Fixa</option>
+                        <option>Tesouro Direto</option>
+                        <option>CDB/LCI/LCA</option>
+                        <option>Fundos</option>
+                        <option>Ações</option>
+                        <option>Cripto</option>
+                        <option>Outro</option>
+                    </select>
+
+                    <input class="inp" id="inv-date" type="date" />
+                </div>
+
+                <button class="btn-add"
+                        onclick="addInvestment()">
+                    Registrar 💼
+                </button>
+            </div>
+
+            <div class="tx-list" id="inv-list"></div>
+        </section>
+
+        <!-- DINDIN -->
+        <section id="page-dindin"
+                 class="page"
+                 role="tabpanel"
+                 aria-labelledby="tab-dindin">
+            <h2 class="section-title">Dindin 🏆</h2>
+            <p class="section-sub">
+                Desafios, conquistas e sua evolução financeira
+            </p>
+
+            <div class="xp-bar-container">
+                <div class="xp-bar-header">
+                    <div class="xp-level" id="xp-level-label">
+                        ⭐ Nível 1 — Iniciante
+                    </div>
+                    <div class="xp-count" id="xp-count-label">
+                        0 / 200 XP
+                    </div>
+                </div>
+
+                <div class="xp-bar-track"
+                     id="xp-progressbar"
+                     role="progressbar"
+                     aria-valuemin="0"
+                     aria-valuemax="200"
+                     aria-valuenow="0">
+                    <div class="xp-bar-fill"
+                         id="xp-bar-fill"
+                         style="width:0%"></div>
+                </div>
+
+                <div class="xp-bar-tip" id="xp-bar-tip">
+                    Complete desafios e registre transações para ganhar XP!
+                </div>
+            </div>
+
+            <div class="grid-2" id="challenges-grid"></div>
+            <hr class="divider" />
+            <div class="achievement-grid" id="achievements-grid"></div>
+        </section>
+    </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+    <div class="modal-box">
+        <div class="modal-title">Nova categoria</div>
+
+        <input class="inp"
+               id="modal-cat-input"
+               type="text"
+               placeholder="Ex: Pets, Games, Cursos..." />
+
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">
+                Cancelar
+            </button>
+            <button class="btn-confirm" onclick="confirmNewCat()">
+                Adicionar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toast-container"></div>

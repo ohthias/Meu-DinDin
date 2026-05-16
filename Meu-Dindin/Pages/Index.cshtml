@@ -1,10 +1,128 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Login";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="~/css/root.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+
+<div id="login-screen" role="main" aria-label="Tela de login">
+    <!-- Elementos decorativos de fundo -->
+    <div class="bg-shape bg-shape-1" aria-hidden="true"></div>
+    <div class="bg-shape bg-shape-2" aria-hidden="true"></div>
+
+    <div class="login-wrapper">
+        <!-- Lado esquerdo com branding -->
+        <section class="login-hero" aria-label="Apresentação do aplicativo">
+            <div class="hero-badge">
+                <span>✨ Organize sua vida financeira</span>
+            </div>
+
+            <div class="hero-content">
+                <div class="hero-logo">
+                    <span class="hero-icon" aria-hidden="true">💸</span>
+                    <h1>Meu Dindin</h1>
+                </div>
+
+                <p class="hero-subtitle">
+                    Controle seus gastos, conquiste metas e transforme seu dinheiro em liberdade.
+                </p>
+
+                <ul class="hero-features">
+                    <li>
+                        <span class="feature-icon">📊</span>
+                        <div>
+                            <strong>Visualize seus gastos</strong>
+                            <p>Entenda para onde seu dinheiro está indo.</p>
+                        </div>
+                    </li>
+
+                    <li>
+                        <span class="feature-icon">🎯</span>
+                        <div>
+                            <strong>Defina objetivos</strong>
+                            <p>Economize para viagens, estudos e sonhos.</p>
+                        </div>
+                    </li>
+
+                    <li>
+                        <span class="feature-icon">🏆</span>
+                        <div>
+                            <strong>Ganhe conquistas</strong>
+                            <p>Torne o hábito de poupar mais divertido.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Card de login -->
+        <section class="login-card" role="region" aria-label="Formulário de acesso">
+            <div class="card-header">
+                <h2>Bem-vindo de volta</h2>
+                <p>Entre na sua conta para acompanhar seu progresso.</p>
+            </div>
+
+            <form method="post" class="login-form">
+                <div class="form-group">
+                    <label for="Nome">Seu nome</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">👤</span>
+                        <input type="text" id="Nome" name="Nome" placeholder="Ex: Ana Souza" autocomplete="name"
+                               required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="Email">E-mail</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">✉️</span>
+                        <input type="email" id="Email" name="Email" placeholder="ana@email.com" autocomplete="email"
+                               required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="Senha">Senha</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">🔑</span>
+                        <input type="password" id="Senha" name="Senha" placeholder="••••••••"
+                               autocomplete="current-password" required />
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" />
+                        <span>Lembrar de mim</span>
+                    </label>
+
+                    <a href="/EsqueciSenha" class="link-secondary">
+                        Esqueci a senha
+                    </a>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <span>Entrar</span>
+                </button>
+
+                @if (!string.IsNullOrEmpty(Model.MensagemErro))
+                {
+                    <div class="alert-error" role="alert">
+                        <span aria-hidden="true">⚠️</span>
+                        <span>@Model.MensagemErro</span>
+                    </div>
+                }
+
+                <div class="divider">
+                    <span>ou</span>
+                </div>
+
+                <a href="/Cadastro" class="btn-secondary">
+                    <span>Criar conta grátis</span>
+                </a>
+            </form>
+        </section>
+    </div>
 </div>

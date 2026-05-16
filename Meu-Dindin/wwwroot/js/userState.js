@@ -1,0 +1,23 @@
+const state = {
+  user: null,
+  transactions: [],
+  investments: [],
+  xp: 0,
+  level: 1,
+  categories: [
+    "Alimentação",
+    "Transporte",
+    "Lazer",
+    "Saúde",
+    "Educação",
+    "Moradia",
+    "Salário",
+    "Freela",
+    "Outros",
+  ],
+  selectedCat: null,
+  txType: "income",
+  charts: { bar: null, donut: null },
+  challengesCompleted: new Set(),
+  achievementsUnlocked: new Set(),
+};
