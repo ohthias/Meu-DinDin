@@ -2,57 +2,59 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MeuDinDin.Services;
-using Meu_Dindin.Data;
 using Meu_Dindin.Services;
-using Microsoft.OpenApi;
+using Meu_Dindin.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Banco de dados ──────────────────────────────────────────────────────────
+// ── Banco de dados (SQLite) ───────────────────────────────────────────────────
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("Default")
                   ?? "Data Source=meudindin.db"));
 
-// ── JWT ─────────────────────────────────────────────────────────────────────
+// ── JWT ───────────────────────────────────────────────────────────────────────
 var jwtKey = builder.Configuration["Jwt:Key"]
              ?? "MeuDinDin_SecretKey_2026_@ChangeThis!";
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt =>
     {
         opt.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-            ValidateIssuer   = false,
-            ValidateAudience = false,
-            ClockSkew        = TimeSpan.Zero
+            IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ValidateIssuer           = false,
+            ValidateAudience         = false,
+            ClockSkew                = TimeSpan.Zero
         };
     });
 
 builder.Services.AddAuthorization();
 
-// ── Serviços ─────────────────────────────────────────────────────────────────
+// ── Serviços ──────────────────────────────────────────────────────────────────
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TransacaoService>();
 builder.Services.AddScoped<MetaService>();
 builder.Services.AddScoped<GamificacaoService>();
 builder.Services.AddScoped<RecomendacaoService>();
+builder.Services.AddScoped<InvestimentoService>();
 
-// ── Controllers + Swagger ────────────────────────────────────────────────────
+// ── Controllers + Swagger ─────────────────────────────────────────────────────
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title   = "Meu DinDin API",
-        Version = "v1",
+        Title       = "Meu DinDin API",
+        Version     = "v1",
         Description = "API de gestão financeira para jovens adultos"
     });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header. Ex: \"Bearer {token}\"",
+        Description = "JWT Authorization. Ex: \"Bearer {token}\"",
         Name        = "Authorization",
         In          = ParameterLocation.Header,
         Type        = SecuritySchemeType.ApiKey,
@@ -61,15 +63,23 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id   = "Bearer"
+                }
+            },
             Array.Empty<string>()
         }
     });
 });
 
-// ── CORS (dev) ────────────────────────────────────────────────────────────────
+// ── CORS (desenvolvimento) ────────────────────────────────────────────────────
 builder.Services.AddCors(opt =>
-    opt.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+    opt.AddDefaultPolicy(p =>
+        p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 var app = builder.Build();
 
@@ -84,17 +94,18 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meu DinDin v1"));
+    app.UseSwaggerUI(c =>
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meu DinDin v1"));
 }
 
 app.UseCors();
-app.UseDefaultFiles();   // serve wwwroot/index.html
-app.UseStaticFiles();    // serve wwwroot/meu_dindin.html etc.
+app.UseDefaultFiles();   // serve wwwroot/index.html ou meu_dindin.html
+app.UseStaticFiles();    // serve wwwroot/*
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Fallback: qualquer rota não-API devolve o SPA
+// Fallback SPA: qualquer rota não-API devolve o frontend
 app.MapFallbackToFile("meu_dindin.html");
 
 app.Run();

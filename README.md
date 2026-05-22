@@ -1,150 +1,215 @@
-# Meu DinDin 💰
+# 💰 Meu DinDin — ASP.NET Core 8 + SPA
 
-Sistema web de gestão financeira pessoal desenvolvido como trabalho universitário, com o objetivo de auxiliar usuários no controle de receitas, despesas, metas financeiras e acompanhamento da saúde financeira de forma simples, moderna e intuitiva.
+Aplicativo web de gestão financeira para jovens adultos (18–25 anos), com gamificação, onboarding personalizado e recomendações inteligentes.
 
-## 📚 Sobre o Projeto
+## 📁 Estrutura do projeto
 
-O **Meu DinDin** foi desenvolvido para aplicar conceitos de:
-
-* Programação Orientada a Objetos (POO)
-* Desenvolvimento Web com ASP.NET Core
-* Arquitetura em camadas
-* Banco de dados relacional
-* APIs REST
-* Autenticação com JWT
-* Boas práticas de UX/UI
-* Organização e manutenção de software
-
-O sistema busca oferecer uma experiência prática para gerenciamento financeiro pessoal, permitindo maior organização e educação financeira dos usuários.
-
-## 🚀 Tecnologias Utilizadas
-
-* C#
-* ASP.NET Core
-* Entity Framework Core
-* SQL Server
-* JWT Authentication
-* Razor Pages / MVC
-* Swagger
-* HTML5
-* CSS3
-* JavaScript
-
-## 🏗️ Arquitetura do Projeto
-
-O projeto foi estruturado seguindo o modelo de separação por responsabilidades:
-
-```txt
-📦 MeuDinDin
- ┣ 📂 Controllers
- ┣ 📂 Models
- ┣ 📂 Services
- ┣ 📂 Data
- ┣ 📂 Views
- ┣ 📂 wwwroot
- ┗ 📂 Migrations
+```
+MeuDinDin/
+├── Controllers/
+│   ├── AuthController.cs          # /api/auth — login, registro, perfil
+│   ├── TransacoesController.cs    # /api/transacoes
+│   ├── MetasController.cs         # /api/metas
+│   ├── InvestimentosController.cs # /api/investimentos
+│   ├── GamificacaoController.cs   # /api/gamificacao
+│   └── RecomendacoesController.cs # /api/recomendacoes
+├── Data/
+│   └── AppDbContext.cs            # EF Core + SQLite + seed
+├── DTOs/
+│   ├── AuthDtos.cs
+│   └── FinanceiroDtos.cs
+├── Migrations/
+│   ├── InitialCreate.cs
+│   └── AppDbContextModelSnapshot.cs
+├── Models/
+│   ├── Usuario.cs
+│   ├── Transacao.cs
+│   ├── Meta.cs
+│   ├── Investimento.cs
+│   └── Gamificacao.cs             # Desafio, Medalha, OnboardingResposta
+├── Services/
+│   ├── AuthService.cs
+│   ├── TransacaoService.cs
+│   ├── MetaService.cs
+│   ├── InvestimentoService.cs
+│   ├── GamificacaoService.cs
+│   └── RecomendacaoService.cs
+├── wwwroot/
+│   ├── meu_dindin.html            # SPA — frontend completo
+│   └── api.js                     # Camada de integração JS ↔ API C#
+├── Program.cs
+├── appsettings.json
+├── appsettings.Development.json
+└── MeuDinDin.csproj
 ```
 
-### Camadas
-
-| Camada               | Responsabilidade                    |
-| -------------------- | ----------------------------------- |
-| Presentation         | Interface e interação com o usuário |
-| Application/Services | Regras de negócio                   |
-| Domain/Models        | Entidades e objetos do sistema      |
-| Data                 | Persistência e acesso ao banco      |
-
-## ✨ Funcionalidades
-
-* Cadastro e login de usuários
-* Autenticação utilizando JWT
-* Controle de receitas
-* Controle de despesas
-* Definição de metas financeiras
-* Dashboard financeiro
-* Relatórios básicos
-* Organização por categorias
-* Persistência em banco de dados
-
-## 🔒 Segurança
-
-O sistema implementa práticas básicas de segurança, incluindo:
-
-* Criptografia de senhas
-* Autenticação via token JWT
-* Validação de entrada de dados
-* Controle de acesso por usuário
-
-## ⚙️ Como Executar o Projeto
+## 🚀 Como rodar (passo a passo)
 
 ### Pré-requisitos
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8)
+- Visual Studio 2022+ **ou** VS Code com extensão C#
 
-* .NET SDK 8.0+
-* SQL Server
-* Visual Studio 2022 ou VS Code
-
-### 1. Clone o repositório
-
+### 1. Restaurar dependências
 ```bash
-git clone https://github.com/ohthias/Meu-DinDin.git
+dotnet restore
 ```
 
-### 2. Acesse a pasta do projeto
-
+### 2. Criar o banco de dados (SQLite — automático na primeira execução)
 ```bash
-cd Meu-DinDin
-```
+# Opção A: EnsureCreated automático (já configurado no Program.cs)
+dotnet run
 
-### 3. Configure a connection string
-
-No arquivo:
-
-```txt
-appsettings.json
-```
-
-Configure sua conexão com o SQL Server:
-
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=SEU_SERVIDOR;Database=MeuDinDin;Trusted_Connection=True;TrustServerCertificate=True;"
-}
-```
-
-### 4. Execute as migrations
-
-```bash
+# Opção B: Usar Migrations manualmente
 dotnet ef database update
 ```
 
-### 5. Execute o projeto
-
+### 3. Rodar o servidor
 ```bash
 dotnet run
+# Ou em modo watch (hot reload):
+dotnet watch run
 ```
 
-## 📖 Documentação da API
+### 4. Acessar o app
+- **Frontend:** http://localhost:5000/meu_dindin.html
+- **Swagger UI:** http://localhost:5000/swagger
 
-Após iniciar o projeto, a documentação Swagger estará disponível em:
+## 🔑 Fluxo de autenticação
 
-```txt
-https://localhost:xxxx/swagger
+```
+1. POST /api/auth/register  → { nome, email, senha }
+                            ← { token, usuarioId, ... }
+
+2. POST /api/auth/onboarding → { respostas: [...] }
+   (Bearer token no header)
+
+3. Todas as rotas subsequentes exigem:
+   Authorization: Bearer <token>
 ```
 
-## 🎯 Objetivo Acadêmico
+O token JWT dura **30 dias** e é armazenado no `localStorage` pelo `api.js`.
 
-Este projeto foi desenvolvido como atividade universitária com foco em:
+## 📡 Endpoints da API
 
-* Aplicação prática de engenharia de software
-* Desenvolvimento full stack
-* Estruturação de sistemas escaláveis
-* Integração entre front-end e back-end
-* Modelagem de banco de dados
-* Experiência do usuário
+### Auth
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | `/api/auth/register` | Criar conta |
+| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/onboarding` | Salvar respostas do quiz inicial |
+| GET | `/api/auth/perfil` | Obter perfil do usuário |
+| PUT | `/api/auth/perfil` | Atualizar perfil |
+| PUT | `/api/auth/senha` | Alterar senha |
 
+### Transações
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/api/transacoes?mes=5&ano=2026` | Listar por mês |
+| GET | `/api/transacoes` | Listar todas |
+| POST | `/api/transacoes` | Adicionar |
+| DELETE | `/api/transacoes/{id}` | Remover |
+| GET | `/api/transacoes/resumo?mes=5&ano=2026` | Resumo financeiro |
+| GET | `/api/transacoes/evolucao?meses=5` | Evolução mensal |
 
-## 👨‍💻 Autor
+### Metas
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/api/metas` | Listar |
+| POST | `/api/metas` | Criar |
+| PATCH | `/api/metas/{id}/valor` | Atualizar progresso |
+| DELETE | `/api/metas/{id}` | Remover |
 
-Desenvolvido por Matheus Gabriel
+### Investimentos
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/api/investimentos` | Listar aportes |
+| GET | `/api/investimentos/resumo` | Resumo por tipo |
+| POST | `/api/investimentos` | Novo aporte |
+| DELETE | `/api/investimentos/{id}` | Remover |
 
-* GitHub: [ohthias](https://github.com/ohthias)
+### Gamificação
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/api/gamificacao` | XP, nível, desafios, medalhas |
+| GET | `/api/gamificacao/desafios` | Listar desafios |
+| POST | `/api/gamificacao/desafios/{id}/avancar` | Avançar dia do desafio |
+| GET | `/api/gamificacao/medalhas` | Listar medalhas |
+| POST | `/api/gamificacao/loja/resgatar` | Resgatar recompensa |
+
+### Recomendações
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/api/recomendacoes?mes=5&ano=2026` | Recomendações personalizadas |
+
+## 🗄️ Banco de dados
+
+O projeto usa **SQLite** por padrão (arquivo `meudindin.db` na raiz).
+
+Para trocar para **SQL Server** em produção:
+
+```csharp
+// Program.cs — substituir:
+builder.Services.AddDbContext<AppDbContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+```
+
+```json
+// appsettings.json
+"ConnectionStrings": {
+  "Default": "Server=.;Database=MeuDinDin;Trusted_Connection=True;"
+}
+```
+
+E instalar o pacote:
+```bash
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+```
+
+## 🎮 Sistema de gamificação
+
+| Ação | XP ganho |
+|------|----------|
+| Registrar transação | +10 XP |
+| Criar meta | +25 XP |
+| Novo aporte | +50 XP |
+| Concluir quiz | +50 XP |
+| Concluir desafio | XP variável (100–300) |
+
+| Nível | XP necessário | Título |
+|-------|---------------|--------|
+| 1 | 0 | Novato |
+| 2 | 100 | Poupador |
+| 3 | 300 | Economizador |
+| 4 | 600 | Planejador |
+| 5 | 1.000 | Financista |
+| 6 | 1.500 | Gestor |
+| 7 | 2.200 | Economista |
+| 8 | 3.000 | Investidor |
+| 9 | 4.000 | Especialista |
+| 10 | 5.200 | Guru |
+| 11 | 6.600 | Mestre DinDin |
+
+## ♿ Acessibilidade
+
+- 250+ atributos ARIA no frontend
+- Alto contraste, texto grande e redução de animações (persistidos no perfil)
+- Atalho `Alt + A` para painel de acessibilidade
+- Leitura em voz alta via Web Speech API
+- Painel de Libras expansível
+
+## 🔐 Segurança
+
+- Senhas com BCrypt (cost factor 11)
+- JWT com expiração de 30 dias (configurável em `appsettings.json`)
+- Todas as rotas de dados exigem `[Authorize]`
+- Cada usuário só acessa seus próprios dados (filtro por `UsuarioId` em todos os serviços)
+- Troque a `Jwt:Key` em produção por uma chave segura de 32+ caracteres
+
+## 📦 Pacotes utilizados
+
+| Pacote | Versão | Uso |
+|--------|--------|-----|
+| `Microsoft.EntityFrameworkCore.Sqlite` | 8.0.0 | ORM + banco |
+| `Microsoft.AspNetCore.Authentication.JwtBearer` | 8.0.0 | Autenticação JWT |
+| `BCrypt.Net-Next` | 4.0.3 | Hash de senhas |
+| `Swashbuckle.AspNetCore` | 6.5.0 | Swagger UI |

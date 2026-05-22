@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Meu DinDin – Gestão Financeira</title>
+<meta name="description" content="Gestão financeira para jovens adultos com gamificação e recomendações personalizadas"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F5F2;
+  --bg2:#FFFFFF;
+  --bg3:#EFF0EE;
+  --border:#E2E0DB;
+  --border2:#D0CEC8;
+  --text:#1A1A18;
+  --text2:#6B6860;
+  --text3:#9B9890;
+  --green:#2D6A1F;
+  --green-bg:#EBF4E6;
+  --green-mid:#639922;
+  --red:#C0392B;
+  --red-bg:#FBEAEA;
+  --red-mid:#E24B4A;
+  --blue:#1A5FA5;
+  --blue-bg:#E6F1FB;
+  --purple:#534AB7;
+  --purple-bg:#EEEDFE;
+  --amber:#7A4A00;
+  --amber-bg:#FFF3DC;
+  --accent:#C0392B;
+  --accent2:#2D6A1F;
+  --xp:#7F77DD;
+  --radius:10px;
+  --radius-sm:6px;
+  --shadow:0 1px 4px rgba(0,0,0,.07);
+  --shadow-md:0 4px 16px rgba(0,0,0,.10);
+  --font:'Plus Jakarta Sans',sans-serif;
+  --font-mono:'Space Mono',monospace;
+  --transition:0.18s ease;
+}
+html{font-size:14px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;overflow-x:hidden}
+button,input,select,textarea{font-family:var(--font);font-size:13px}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+img{max-width:100%}
+
+/* ===== ACCESSIBILITY ===== */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+[aria-live]{position:relative}
+.skip-link{position:fixed;top:-50px;left:12px;z-index:9999;background:var(--text);color:#fff;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;transition:top .2s}
+.skip-link:focus{top:12px}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+
+/* ===== SCREENS ===== */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex}
+
+/* ===== AUTH ===== */
+#screen-auth{align-items:center;justify-content:center;background:linear-gradient(135deg,#F7F5F2 0%,#F0EDE8 100%)}
+.auth-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:400px;padding:36px 32px;box-shadow:var(--shadow-md)}
+.auth-logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:4px}
+.auth-logo .logo-icon{width:44px;height:44px;background:linear-gradient(135deg,#C0392B,#E24B4A);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.auth-logo .logo-icon i{color:#fff;font-size:22px}
+.auth-logo .logo-text{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.auth-subtitle{text-align:center;color:var(--text2);font-size:12px;margin-bottom:24px}
+.auth-tabs{display:flex;background:var(--bg3);border-radius:8px;padding:3px;margin-bottom:20px}
+.auth-tab{flex:1;padding:8px;border:none;background:transparent;border-radius:6px;font-size:13px;font-weight:500;color:var(--text2);transition:var(--transition)}
+.auth-tab.active{background:var(--bg2);color:var(--text);box-shadow:var(--shadow)}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.form-input{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;background:var(--bg);color:var(--text);transition:var(--transition)}
+.form-input:focus{outline:none;border-color:var(--accent);background:var(--bg2)}
+.input-wrap{position:relative}
+.input-wrap .form-input{padding-right:38px}
+.input-wrap .input-icon{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px;cursor:pointer;background:none;border:none;padding:2px}
+.btn-full{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--transition)}
+.btn-full:hover{background:#A93225;transform:translateY(-1px)}
+.auth-footer{text-align:center;font-size:11px;color:var(--text3);margin-top:16px}
+.forgot-link{display:block;text-align:right;font-size:11px;color:var(--text2);margin-top:-8px;margin-bottom:14px;cursor:pointer}
+.forgot-link:hover{color:var(--accent)}
+
+/* ===== ONBOARDING QUIZ ===== */
+#screen-onboarding{align-items:center;justify-content:center;background:linear-gradient(135deg,#F7F5F2 0%,#F0EDE8 100%)}
+.onboard-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:520px;padding:36px 32px;box-shadow:var(--shadow-md)}
+.onboard-progress{display:flex;gap:6px;margin-bottom:28px}
+.onboard-step-dot{flex:1;height:4px;border-radius:2px;background:var(--bg3);transition:background .3s}
+.onboard-step-dot.done{background:var(--accent)}
+.onboard-step-dot.active{background:var(--accent);opacity:.5}
+.onboard-q{font-size:17px;font-weight:700;margin-bottom:8px}
+.onboard-qdesc{font-size:13px;color:var(--text2);margin-bottom:20px}
+.onboard-opts{display:flex;flex-direction:column;gap:8px}
+.onboard-opt{border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;gap:12px;font-size:13px;font-weight:500}
+.onboard-opt:hover{border-color:var(--accent);background:var(--red-bg)}
+.onboard-opt.selected{border-color:var(--accent);background:var(--red-bg);color:var(--accent)}
+.onboard-opt i{font-size:20px;color:var(--text3)}
+.onboard-opt.selected i{color:var(--accent)}
+.onboard-nav{display:flex;justify-content:space-between;margin-top:24px;align-items:center}
+.btn-ghost{background:transparent;border:1px solid var(--border);border-radius:8px;padding:9px 18px;font-size:13px;font-weight:500;color:var(--text2);transition:var(--transition)}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:var(--transition)}
+.btn-primary:hover{background:#A93225;transform:translateY(-1px)}
+.btn-green{background:var(--accent2);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:var(--transition)}
+.btn-green:hover{background:#235517}
+
+/* ===== APP LAYOUT ===== */
+#screen-app{flex-direction:row}
+.sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;z-index:100}
+.sidebar-logo{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sidebar-logo .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#C0392B,#E24B4A);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sidebar-logo .logo-icon i{color:#fff;font-size:17px}
+.sidebar-logo .logo-name{font-size:16px;font-weight:700;letter-spacing:-.3px}
+nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-section{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:8px 20px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-radius:0;border-right:2px solid transparent;transition:var(--transition);text-decoration:none}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--red-bg);color:var(--accent);border-right-color:var(--accent)}
+.nav-item i{font-size:17px;width:20px;flex-shrink:0}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:10px;cursor:pointer;border-radius:8px;padding:6px;transition:var(--transition)}
+.user-row:hover{background:var(--bg3)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#E24B4A);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
+.user-avatar img{width:100%;height:100%;object-fit:cover}
+.user-name{font-size:12px;font-weight:600;line-height:1.2}
+.user-level{font-size:10px;color:var(--text2)}
+
+/* ===== MAIN CONTENT ===== */
+.main-content{flex:1;display:flex;flex-direction:column;min-width:0;height:100vh;overflow:hidden}
+.page{display:none;flex-direction:column;flex:1;overflow-y:auto;overflow-x:hidden}
+.page.active{display:flex}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;flex-shrink:0}
+.topbar-left h1{font-size:16px;font-weight:700;margin:0}
+.topbar-left p{font-size:11px;color:var(--text2)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.content{padding:22px 24px;flex:1}
+
+/* ===== BUTTONS ===== */
+.btn-sm{font-size:12px;padding:7px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:var(--transition)}
+.btn-sm:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+.btn-icon{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition)}
+.btn-icon:hover{background:var(--bg3);border-color:var(--border2)}
+.btn-icon i{font-size:16px;color:var(--text2)}
+.badge-notif{position:relative}
+.badge-notif::after{content:'';position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--accent);border:1.5px solid var(--bg2)}
+
+/* ===== TAGS ===== */
+.tag{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-red{background:var(--red-bg);color:var(--red)}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+.tag-amber{background:var(--amber-bg);color:var(--amber)}
+.tag-gray{background:var(--bg3);color:var(--text2)}
+
+/* ===== GRID ===== */
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+
+/* ===== CARD ===== */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.card-title{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-header .card-title{margin-bottom:0}
+
+/* ===== METRIC CARDS ===== */
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.metric-label{font-size:11px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.metric-value{font-size:22px;font-weight:700;font-family:var(--font-mono);letter-spacing:-.5px;line-height:1}
+.metric-sub{font-size:11px;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:4px}
+.metric-sub.up{color:var(--green)}
+.metric-sub.down{color:var(--red)}
+.metric-accent{background:var(--text);color:#fff}
+.metric-accent .metric-label{color:rgba(255,255,255,.6)}
+.metric-accent .metric-value{color:#fff}
+.metric-accent .metric-sub{color:rgba(255,255,255,.5)}
+
+/* ===== LIST ITEMS ===== */
+.li{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
+.li:last-child{border-bottom:none}
+.li-title{font-size:13px;font-weight:500}
+.li-sub{font-size:11px;color:var(--text2)}
+
+/* ===== PROGRESS BARS ===== */
+.bar-bg{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.bar-green{background:var(--green-mid)}
+.bar-red{background:var(--red-mid)}
+.bar-blue{background:#378ADD}
+.bar-purple{background:var(--xp)}
+.bar-amber{background:#EF9F27}
+.xp-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:6px}
+.xp-fill{height:100%;background:var(--xp);border-radius:3px}
+
+/* ===== FORM ===== */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-group-sm{display:flex;flex-direction:column;gap:4px}
+.form-label-sm{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+.inp{border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;background:var(--bg);color:var(--text);transition:var(--transition);width:100%}
+.inp:focus{outline:none;border-color:var(--accent);background:var(--bg2)}
+select.inp{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6860' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+
+/* ===== TABLE ===== */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg)}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.table-amount-pos{color:var(--green);font-weight:700;font-family:var(--font-mono)}
+.table-amount-neg{color:var(--red);font-weight:700;font-family:var(--font-mono)}
+
+/* ===== CHART BARS ===== */
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;padding:0 2px}
+.cbar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
+.cbar{width:100%;border-radius:3px 3px 0 0;transition:height .5s ease}
+.cbar-label{font-size:9px;color:var(--text3);text-align:center}
+
+/* ===== XP HEADER ===== */
+.xp-header{background:linear-gradient(135deg,var(--bg2) 0%,var(--red-bg) 100%);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.xp-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#E24B4A);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
+.xp-avatar img{width:100%;height:100%;object-fit:cover}
+.xp-info{flex:1}
+.xp-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.xp-level{font-size:11px;color:var(--text2);margin-bottom:5px}
+.xp-coins{text-align:right;flex-shrink:0}
+.xp-coins-val{font-size:20px;font-weight:700;color:var(--amber);font-family:var(--font-mono)}
+.xp-coins-label{font-size:10px;color:var(--text2)}
+
+/* ===== CHALLENGE CARD ===== */
+.challenge-card{border:1px solid var(--border);border-radius:var(--radius);padding:12px;display:flex;flex-direction:column;gap:8px}
+.challenge-header{display:flex;align-items:center;justify-content:space-between}
+.challenge-title{font-size:13px;font-weight:600}
+.challenge-sub{font-size:11px;color:var(--text2)}
+.challenge-progress-row{display:flex;align-items:center;gap:8px}
+.challenge-progress-row .bar-bg{flex:1}
+
+/* ===== MEDAL ===== */
+.medal{background:var(--bg3);border-radius:8px;padding:12px 8px;text-align:center;font-size:11px;font-weight:500;transition:var(--transition)}
+.medal:hover{background:var(--bg2);box-shadow:var(--shadow)}
+.medal-icon{font-size:24px;display:block;margin-bottom:4px}
+.medal-locked{opacity:.3}
+
+/* ===== INVEST ===== */
+.invest-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:var(--transition)}
+.invest-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.invest-header{padding:16px;display:flex;align-items:center;justify-content:space-between}
+.invest-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.invest-body{padding:0 16px 16px}
+.invest-stat{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.invest-stat-label{color:var(--text2)}
+.invest-stat-value{font-weight:600;font-family:var(--font-mono)}
+.invest-expand{background:var(--bg3);padding:14px 16px;border-top:1px solid var(--border);display:none}
+.invest-expand.open{display:block}
+
+/* ===== QUIZ ===== */
+.quiz-opt{border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;cursor:pointer;margin-bottom:7px;transition:var(--transition);display:flex;align-items:center;gap:8px}
+.quiz-opt:hover{border-color:var(--accent);background:var(--red-bg)}
+.quiz-opt.correct{border-color:var(--green-mid);background:var(--green-bg);color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red-mid);background:var(--red-bg);color:var(--red)}
+.quiz-opt-letter{width:22px;height:22px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+
+/* ===== PROFILE ===== */
+.profile-banner{height:90px;background:linear-gradient(135deg,#C0392B 0%,#E24B4A 50%,#7F77DD 100%);border-radius:12px 12px 0 0;margin:-16px -16px 0}
+.profile-avatar-wrap{margin-top:-32px;margin-left:20px;margin-bottom:12px}
+.profile-avatar{width:64px;height:64px;border-radius:50%;border:3px solid var(--bg2);background:linear-gradient(135deg,var(--accent),#E24B4A);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;overflow:hidden;cursor:pointer;position:relative}
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;border-radius:50%}
+.profile-avatar:hover .profile-avatar-overlay{display:flex}
+.profile-avatar-overlay i{color:#fff;font-size:18px}
+
+/* ===== NOTIFICATIONS ===== */
+.notif-panel{position:fixed;top:0;right:-340px;width:320px;height:100vh;background:var(--bg2);border-left:1px solid var(--border);z-index:200;transition:right .25s ease;overflow-y:auto;padding:20px}
+.notif-panel.open{right:0}
+.notif-item{border-radius:8px;padding:12px;background:var(--bg3);margin-bottom:8px;font-size:12px}
+.notif-item-title{font-weight:600;margin-bottom:2px}
+.notif-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:199;display:none}
+.notif-overlay.open{display:block}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border-radius:14px;width:100%;max-width:460px;padding:24px;box-shadow:var(--shadow-md)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;font-size:20px;color:var(--text2);cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.modal-close:hover{background:var(--bg3)}
+
+/* ===== LIBRAS WIDGET ===== */
+.libras-btn{position:fixed;bottom:24px;right:24px;z-index:150;width:54px;height:54px;border-radius:50%;background:var(--text);border:none;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);cursor:pointer;transition:var(--transition)}
+.libras-btn:hover{transform:scale(1.08)}
+.libras-btn i{color:#fff;font-size:22px}
+.libras-panel{position:fixed;bottom:90px;right:24px;z-index:150;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;width:260px;box-shadow:var(--shadow-md);display:none}
+.libras-panel.open{display:block}
+.libras-panel h3{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.libras-shortcuts{display:flex;flex-direction:column;gap:6px}
+.libras-shortcut{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);padding:6px 8px;border-radius:6px;cursor:pointer;transition:var(--transition)}
+.libras-shortcut:hover{background:var(--bg3);color:var(--text)}
+.libras-shortcut i{font-size:16px;color:var(--accent)}
+
+/* ===== RECOMMENDATION ===== */
+.rec-card{border-left:3px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);border-right:1px solid var(--border);padding:14px}
+.rec-card-green{border-left-color:var(--green-mid)}
+.rec-card-blue{border-left-color:var(--blue)}
+.rec-icon{font-size:20px;margin-right:8px}
+
+/* ===== TOAST ===== */
+.toast-container{position:fixed;top:20px;right:20px;z-index:500;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--text);color:#fff;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-md);transform:translateX(120%);transition:transform .3s ease;max-width:300px}
+.toast.show{transform:translateX(0)}
+.toast i{font-size:17px}
+.toast-green{background:var(--green)}
+.toast-red{background:var(--red)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+  .sidebar{width:56px;min-width:56px}
+  .sidebar-logo .logo-name,.nav-item span,.nav-section,.user-name,.user-level{display:none}
+  .nav-item{justify-content:center;padding:10px}
+  .nav-item i{width:auto}
+  .sidebar-logo{justify-content:center;padding:16px 0}
+  .sidebar-footer{padding:10px}
+  .user-row{justify-content:center}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Skip to main content -->
+<a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<div class="screen active" id="screen-auth" role="main">
+  <div class="auth-box" role="dialog" aria-labelledby="auth-title">
+    <div class="auth-logo">
+      <div class="logo-icon" aria-hidden="true"><i class="ti ti-coin"></i></div>
+      <span class="logo-name" id="auth-title">Meu DinDin</span>
+    </div>
+    <p class="auth-subtitle">Gestão financeira para jovens adultos</p>
+
+    <div class="auth-tabs" role="tablist" aria-label="Modo de acesso">
+      <button class="auth-tab active" id="tab-login" role="tab" aria-selected="true" aria-controls="panel-login" onclick="setAuthMode('login')">Entrar</button>
+      <button class="auth-tab" id="tab-register" role="tab" aria-selected="false" aria-controls="panel-register" onclick="setAuthMode('register')">Criar conta</button>
+    </div>
+
+    <!-- Login Panel -->
+    <div id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+      <div class="form-group">
+        <label class="form-label" for="login-email">E-mail</label>
+        <input class="form-input" id="login-email" type="email" autocomplete="email" placeholder="seu@email.com" aria-required="true"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="login-pass">Senha</label>
+        <div class="input-wrap">
+          <input class="form-input" id="login-pass" type="password" autocomplete="current-password" placeholder="••••••••" aria-required="true"/>
+          <button class="input-icon" onclick="togglePass('login-pass',this)" aria-label="Mostrar senha">
+            <i class="ti ti-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+      <a class="forgot-link" href="#" aria-label="Recuperar senha">Esqueceu a senha?</a>
+      <button class="btn-full" onclick="doLogin()" aria-label="Entrar na conta">
+        Entrar na conta <i class="ti ti-arrow-right" aria-hidden="true"></i>
+      </button>
+      <p class="auth-footer">Acesso seguro · LGPD compliant</p>
+    </div>
+
+    <!-- Register Panel -->
+    <div id="panel-register" role="tabpanel" aria-labelledby="tab-register" style="display:none">
+      <div class="form-group">
+        <label class="form-label" for="reg-name">Nome completo</label>
+        <input class="form-input" id="reg-name" type="text" autocomplete="name" placeholder="Seu nome" aria-required="true"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-email">E-mail</label>
+        <input class="form-input" id="reg-email" type="email" autocomplete="email" placeholder="seu@email.com" aria-required="true"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-pass">Senha</label>
+        <div class="input-wrap">
+          <input class="form-input" id="reg-pass" type="password" autocomplete="new-password" placeholder="Mín. 8 caracteres" aria-required="true"/>
+          <button class="input-icon" onclick="togglePass('reg-pass',this)" aria-label="Mostrar senha">
+            <i class="ti ti-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+      <button class="btn-full" onclick="doRegister()" aria-label="Criar minha conta">
+        Criar minha conta <i class="ti ti-arrow-right" aria-hidden="true"></i>
+      </button>
+      <p class="auth-footer">Acesso seguro · LGPD compliant</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ONBOARDING QUIZ ===================== -->
+<div class="screen" id="screen-onboarding" role="main">
+  <div class="onboard-box" role="dialog" aria-labelledby="onboard-title">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <div class="logo-icon" style="width:30px;height:30px;background:linear-gradient(135deg,#C0392B,#E24B4A);border-radius:8px;display:flex;align-items:center;justify-content:center" aria-hidden="true"><i class="ti ti-coin" style="color:#fff;font-size:15px"></i></div>
+      <span style="font-size:14px;font-weight:700" id="onboard-title">Vamos te conhecer!</span>
+    </div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:18px">Responda rapidinho para personalizarmos o app para você.</p>
+
+    <div class="onboard-progress" id="onboardProgress" role="progressbar" aria-label="Progresso do questionário"></div>
+
+    <div id="onboardContent"></div>
+
+    <div class="onboard-nav">
+      <button class="btn-ghost" id="btnOnboardBack" onclick="onboardBack()" style="visibility:hidden" aria-label="Voltar pergunta">
+        <i class="ti ti-arrow-left" aria-hidden="true"></i> Voltar
+      </button>
+      <span id="onboardCounter" style="font-size:12px;color:var(--text2)">1 de 6</span>
+      <button class="btn-primary" id="btnOnboardNext" onclick="onboardNext()" disabled aria-label="Próxima pergunta">
+        Próxima <i class="ti ti-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MAIN APP ===================== -->
+<div class="screen" id="screen-app" role="main">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" role="navigation" aria-label="Navegação principal">
+    <div class="sidebar-logo">
+      <div class="logo-icon" aria-hidden="true"><i class="ti ti-coin"></i></div>
+      <span class="logo-name">Meu DinDin</span>
+    </div>
+
+    <nav id="mainNav">
+      <div class="nav-section" aria-hidden="true">Principal</div>
+      <a class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')" href="#" role="menuitem" aria-current="page">
+        <i class="ti ti-home" aria-hidden="true"></i> <span>Dashboard</span>
+      </a>
+      <a class="nav-item" id="nav-transacoes" onclick="showPage('transacoes')" href="#" role="menuitem">
+        <i class="ti ti-arrows-exchange" aria-hidden="true"></i> <span>Transações</span>
+      </a>
+      <a class="nav-item" id="nav-metas" onclick="showPage('metas')" href="#" role="menuitem">
+        <i class="ti ti-target" aria-hidden="true"></i> <span>Metas</span>
+      </a>
+      <a class="nav-item" id="nav-relatorio" onclick="showPage('relatorio')" href="#" role="menuitem">
+        <i class="ti ti-chart-bar" aria-hidden="true"></i> <span>Relatórios</span>
+      </a>
+      <div class="nav-section" aria-hidden="true">Engajamento</div>
+      <a class="nav-item" id="nav-dindin" onclick="showPage('dindin')" href="#" role="menuitem">
+        <i class="ti ti-trophy" aria-hidden="true"></i> <span>DinDin</span>
+      </a>
+      <a class="nav-item" id="nav-investir" onclick="showPage('investir')" href="#" role="menuitem">
+        <i class="ti ti-trending-up" aria-hidden="true"></i> <span>Investir</span>
+      </a>
+      <a class="nav-item" id="nav-quiz" onclick="showPage('quiz')" href="#" role="menuitem">
+        <i class="ti ti-school" aria-hidden="true"></i> <span>Educação</span>
+      </a>
+      <div class="nav-section" aria-hidden="true">Conta</div>
+      <a class="nav-item" id="nav-perfil" onclick="showPage('perfil')" href="#" role="menuitem">
+        <i class="ti ti-user" aria-hidden="true"></i> <span>Perfil</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-row" onclick="showPage('perfil')" role="button" tabindex="0" aria-label="Ver perfil">
+        <div class="user-avatar" id="sidebarAvatar" aria-hidden="true">JD</div>
+        <div>
+          <div class="user-name" id="sidebarName">João Diniz</div>
+          <div class="user-level" id="sidebarLevel">Nível 7 · 1240 XP</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content" id="main-content">
+
+    <!-- ===== DASHBOARD ===== -->
+    <section class="page active" id="page-dashboard" aria-labelledby="page-dashboard-title">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1 id="page-dashboard-title">Olá, <span id="dashGreeting">João</span> 👋</h1>
+          <p id="dashDate">Maio de 2026</p>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-sm" onclick="openModal('modalTransacao')" aria-label="Adicionar nova transação">
+            <i class="ti ti-plus" aria-hidden="true"></i> Nova transação
+          </button>
+          <button class="btn-icon badge-notif" onclick="toggleNotif()" aria-label="Notificações" aria-expanded="false" id="btnNotif">
+            <i class="ti ti-bell" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        <!-- Recommendation Banner -->
+        <div class="rec-card rec-card-green" style="margin-bottom:14px" id="dashRec">
+          <span class="rec-icon" aria-hidden="true">💡</span>
+          <strong>Dica personalizada:</strong> Seus gastos com alimentação estão altos. Considere cozinhar mais em casa para economizar até R$200/mês.
+        </div>
+
+        <!-- Metrics -->
+        <div class="grid-4" style="margin-bottom:14px">
+          <div class="metric metric-accent" role="region" aria-label="Saldo atual">
+            <div class="metric-label">Saldo atual</div>
+            <div class="metric-value" id="m-saldo">R$ 1.240</div>
+            <div class="metric-sub">↑ +R$320 vs abril</div>
+          </div>
+          <div class="metric" role="region" aria-label="Receitas de maio">
+            <div class="metric-label">Receitas · maio</div>
+            <div class="metric-value" style="color:var(--green)" id="m-receitas">R$ 3.200</div>
+            <div class="metric-sub up"><i class="ti ti-trending-up" aria-hidden="true"></i> +12% vs anterior</div>
+          </div>
+          <div class="metric" role="region" aria-label="Despesas de maio">
+            <div class="metric-label">Despesas · maio</div>
+            <div class="metric-value" style="color:var(--red)" id="m-despesas">R$ 1.960</div>
+            <div class="metric-sub down"><i class="ti ti-trending-down" aria-hidden="true"></i> -5% vs anterior</div>
+          </div>
+          <div class="metric" role="region" aria-label="Economia do mês">
+            <div class="metric-label">Economia</div>
+            <div class="metric-value" style="color:var(--blue)" id="m-economia">R$ 1.240</div>
+            <div class="metric-sub">38% da renda</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:14px">
+          <!-- Últimas Transações -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Últimas transações</span>
+              <button class="btn-sm" onclick="showPage('transacoes')" aria-label="Ver todas as transações">Ver todas</button>
+            </div>
+            <div id="dashTransacoes" aria-live="polite"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <!-- Gráfico de gastos -->
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">Gastos por categoria</span>
+                <div style="display:flex;gap:4px">
+                  <button class="btn-sm" id="btnChartBar" onclick="switchDashChart('bar')" style="padding:4px 10px;font-size:11px" aria-label="Ver gráfico de barras" aria-pressed="true">Barras</button>
+                  <button class="btn-sm" id="btnChartDough" onclick="switchDashChart('doughnut')" style="padding:4px 10px;font-size:11px" aria-label="Ver gráfico de rosca" aria-pressed="false">Rosca</button>
+                </div>
+              </div>
+              <canvas id="chartDashCat" height="100" aria-label="Gráfico de gastos por categoria" role="img"></canvas>
+            </div>
+            <!-- Desafio ativo -->
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">Desafio ativo <i class="ti ti-flame" style="color:#D85A30" aria-hidden="true"></i></span>
+                <span class="tag tag-purple">Em curso</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <div>
+                  <div class="li-title">7 dias sem delivery</div>
+                  <div class="li-sub">Dia 4/7 · +150 XP</div>
+                </div>
+              </div>
+              <div class="bar-bg"><div class="bar-fill bar-purple" style="width:57%"></div></div>
+              <div style="font-size:10px;color:var(--text2);margin-top:4px;text-align:right">4 de 7 dias</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metas e Previsão -->
+        <div class="grid-3" style="margin-bottom:14px">
+          <div class="card">
+            <div class="card-title">Meta — viagem</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:13px;font-weight:600">R$ 1.240 / R$ 2.000</span>
+              <span class="tag tag-green">62%</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill bar-green" style="width:62%"></div></div>
+            <div style="font-size:10px;color:var(--text2);margin-top:4px">Prazo: dez/2026</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Previsão junho</div>
+            <div style="font-size:22px;font-weight:700;color:var(--green);font-family:var(--font-mono)">R$ 1.580</div>
+            <div class="li-sub" style="margin-top:4px">Baseado nos últimos 3 meses</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Progresso XP</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <i class="ti ti-star" style="font-size:20px;color:var(--xp)" aria-hidden="true"></i>
+              <div>
+                <div style="font-size:13px;font-weight:600" id="dashXPLabel">Nível 7 · Economista</div>
+                <div class="li-sub" id="dashXPSub">1240 / 1500 XP</div>
+              </div>
+            </div>
+            <div class="xp-bar"><div class="xp-fill" id="dashXPFill" style="width:83%"></div></div>
+          </div>
+        </div>
+
+        <!-- Evolução mensal -->
+        <div class="card">
+          <div class="card-header" style="margin-bottom:12px">
+            <span class="card-title">Evolução mensal — receitas vs despesas</span>
+            <span class="tag tag-gray" style="font-size:10px">Últimos 5 meses</span>
+          </div>
+          <canvas id="chartDashMensal" height="80" aria-label="Gráfico de evolução mensal de receitas e despesas" role="img"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TRANSAÇÕES ===== -->
+    <section class="page" id="page-transacoes" aria-labelledby="page-transacoes-title">
+      <div class="topbar">
+        <div class="topbar-left"><h1 id="page-transacoes-title">Transações</h1></div>
+        <div class="topbar-right">
+          <div class="input-wrap" style="width:180px">
+            <input class="inp" id="searchTransacao" type="search" placeholder="Pesquisar..." oninput="renderTransacoes()" aria-label="Pesquisar transações" style="padding-left:34px"/>
+            <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none" aria-hidden="true"></i>
+          </div>
+          <button class="btn-sm" onclick="openModal('modalTransacao')" aria-label="Nova transação">
+            <i class="ti ti-plus" aria-hidden="true"></i> Nova
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        <!-- Forms -->
+        <div class="grid-2" style="margin-bottom:14px">
+          <div class="card" style="border-left:3px solid var(--green-mid);border-radius:0 var(--radius) var(--radius) 0">
+            <div class="card-title" style="color:var(--green)">Nova receita</div>
+            <div class="form-row" style="margin-bottom:10px">
+              <div class="form-group-sm">
+                <label class="form-label-sm" for="rec-valor">Valor</label>
+                <input class="inp" id="rec-valor" type="number" placeholder="R$ 0,00" step="0.01" min="0" aria-required="true"/>
+              </div>
+              <div class="form-group-sm">
+                <label class="form-label-sm" for="rec-cat">Categoria</label>
+                <select class="inp" id="rec-cat" aria-required="true">
+                  <option>Salário</option><option>Estágio</option><option>Bolsa</option><option>Freelance</option><option>Investimentos</option><option>Presente</option><option>Outro</option>
+                </select>
+              </div>
+              <div class="form-group-sm">
+                <label class="form-label-sm" for="rec-data">Data</label>
+                <input class="inp" id="rec-data" type="date" aria-required="true"/>
+              </div>
+              <div class="form-group-sm">
+                <label class="form-label-sm" for="rec-desc">Descrição</label>
+                <input class="inp" id="rec-desc" type="text" placeholder="Ex: estágio"/>
+              </div>
+            </div>
+            <button class="btn-green" style="width:100%;justify-content:center" onclick="addTransacao('receita')" aria-label="Salvar receita">
+              <i class="ti ti-check" aria-hidden="true"></i> Salvar receita
+            </button>
+          </div>
+          <div class="card" style="border-left:3px solid var(--red-mid);border-radius:0 var(--radius) var(--radius) 0">
+            <div class="card-title" style="color:var(--red)">Nova despesa</div>
+            <div class="form-row" style="margin-bottom:10px">
+              <div class="form-group-sm">
+                <label class="form-label-sm" for="dep-valor">Valor</label>
+                <input class="inp" id="dep-valor" type="number" placeholder="R$ 0,00" step="0.01" min="0" aria-required="true"/>
+              </div>
+              <div class="form-group-sm">
+                <label class="form-label-sm" for="dep-cat">Categoria</label>
+                <select class="inp" id="dep-cat" aria-required="true">
+                  <option>Alimentação</option><option>Transporte</option><option>Lazer</option><option>Saúde</option><option>Moradia</option><option>Educação</option><option>Roupas</option><option>Streaming</option><option>Outro</option>
+                </select>
+              </div>
+              <div class="form-group-sm">
+                <label class="form-label-sm" for="dep-data">Data</label>
+                <input class="inp" id="dep-data" type="date" aria-required="true"/>
+              </div>
+              <div class="form-group-sm">
+                <label class="form-label-sm" for="dep-pag">Pagamento</label>
+                <select class="inp" id="dep-pag">
+                  <option>Crédito</option><option>Débito</option><option>Pix</option><option>Dinheiro</option><option>Transferência</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-primary" style="width:100%;justify-content:center;background:var(--red)" onclick="addTransacao('despesa')" aria-label="Salvar despesa">
+              <i class="ti ti-check" aria-hidden="true"></i> Salvar despesa
+            </button>
+          </div>
+        </div>
+
+        <!-- Histórico -->
+        <div class="card">
+          <div class="card-header" style="margin-bottom:10px">
+            <span class="card-title">Histórico · Maio 2026</span>
+            <div style="display:flex;gap:6px">
+              <span class="tag tag-green" id="totalRec">Receitas +R$3.200</span>
+              <span class="tag tag-red" id="totalDep">Despesas -R$1.960</span>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table aria-label="Histórico de transações">
+              <thead>
+                <tr>
+                  <th scope="col">Data</th>
+                  <th scope="col">Descrição</th>
+                  <th scope="col">Categoria</th>
+                  <th scope="col">Pagamento</th>
+                  <th scope="col">Tipo</th>
+                  <th scope="col" style="text-align:right">Valor</th>
+                  <th scope="col"><span class="sr-only">Ações</span></th>
+                </tr>
+              </thead>
+              <tbody id="tbodyTransacoes" aria-live="polite"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== METAS ===== -->
+    <section class="page" id="page-metas" aria-labelledby="page-metas-title">
+      <div class="topbar">
+        <div class="topbar-left"><h1 id="page-metas-title">Metas financeiras</h1></div>
+        <div class="topbar-right">
+          <button class="btn-primary" onclick="openModal('modalMeta')" aria-label="Nova meta">
+            <i class="ti ti-plus" aria-hidden="true"></i> Nova meta
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="grid-3" id="metasGrid" style="margin-bottom:14px" aria-live="polite"></div>
+        <!-- Orçamento por categoria -->
+        <div class="card">
+          <div class="card-title">Orçamento por categoria · Maio 2026</div>
+          <div class="table-wrap">
+            <table aria-label="Orçamento por categoria">
+              <thead>
+                <tr><th scope="col">Categoria</th><th scope="col">Gasto</th><th scope="col">Limite</th><th scope="col" style="width:40%">Progresso</th><th scope="col">Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Alimentação</td><td>R$380</td><td>R$500</td><td><div class="bar-bg"><div class="bar-fill bar-red" style="width:76%"></div></div></td><td><span class="tag tag-amber">76%</span></td></tr>
+                <tr><td>Transporte</td><td>R$80</td><td>R$200</td><td><div class="bar-bg"><div class="bar-fill" style="width:40%;background:#378ADD"></div></div></td><td><span class="tag tag-green">40%</span></td></tr>
+                <tr><td>Lazer</td><td>R$195</td><td>R$200</td><td><div class="bar-bg"><div class="bar-fill bar-red" style="width:97%"></div></div></td><td><span class="tag tag-red">97%</span></td></tr>
+                <tr><td>Saúde</td><td>R$50</td><td>R$150</td><td><div class="bar-bg"><div class="bar-fill bar-green" style="width:33%"></div></div></td><td><span class="tag tag-green">33%</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RELATÓRIO ===== -->
+    <section class="page" id="page-relatorio" aria-labelledby="page-relatorio-title">
+      <div class="topbar">
+        <div class="topbar-left"><h1 id="page-relatorio-title">Relatório · Maio 2026</h1></div>
+        <div class="topbar-right">
+          <button class="btn-sm"><i class="ti ti-calendar" aria-hidden="true"></i> Período</button>
+          <button class="btn-sm"><i class="ti ti-download" aria-hidden="true"></i> Exportar PDF</button>
+          <button class="btn-sm"><i class="ti ti-file-spreadsheet" aria-hidden="true"></i> CSV</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="grid-4" style="margin-bottom:14px">
+          <div class="metric"><div class="metric-label">Total receitas</div><div class="metric-value" style="color:var(--green)">R$ 3.200</div><div class="metric-sub up">+12% vs abril</div></div>
+          <div class="metric"><div class="metric-label">Total despesas</div><div class="metric-value" style="color:var(--red)">R$ 1.960</div><div class="metric-sub down">-5% vs abril</div></div>
+          <div class="metric"><div class="metric-label">Economia do mês</div><div class="metric-value">R$ 1.240</div><div class="metric-sub">38% da renda</div></div>
+          <div class="metric"><div class="metric-label">Maior gasto</div><div class="metric-value" style="font-size:16px">Alimentação</div><div class="metric-sub">R$ 380 · 19%</div></div>
+        </div>
+        <div class="grid-2" style="margin-bottom:14px">
+          <div class="card">
+            <div class="card-title">Despesas por categoria</div>
+            <canvas id="chartRelCat" height="130" aria-label="Gráfico de despesas por categoria" role="img"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-title">Evolução mensal</div>
+            <canvas id="chartRelMes" height="130" aria-label="Gráfico de evolução mensal" role="img"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header" style="margin-bottom:10px">
+            <span class="card-title">Análise inteligente</span>
+            <span class="tag tag-purple">Baseado em 3 meses</span>
+          </div>
+          <div class="grid-3">
+            <div style="background:var(--bg3);border-radius:8px;padding:12px"><div class="li-sub">Saldo previsto · Jun</div><div style="font-size:18px;font-weight:700;color:var(--green);font-family:var(--font-mono);margin-top:4px">R$ 1.580</div></div>
+            <div style="background:var(--bg3);border-radius:8px;padding:12px"><div class="li-sub">Maior risco</div><div style="font-size:14px;font-weight:600;color:var(--red);margin-top:4px">Gastos com lazer</div></div>
+            <div style="background:var(--bg3);border-radius:8px;padding:12px"><div class="li-sub">Potencial de economia</div><div style="font-size:18px;font-weight:700;color:var(--blue);font-family:var(--font-mono);margin-top:4px">+R$ 240/mês</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DINDIN (Gamificação) ===== -->
+    <section class="page" id="page-dindin" aria-labelledby="page-dindin-title">
+      <div class="topbar">
+        <div class="topbar-left"><h1 id="page-dindin-title">DinDin 🏆</h1><p>Desafios e conquistas</p></div>
+        <div class="topbar-right">
+          <button class="btn-sm" onclick="showPage('quiz')" aria-label="Ir para quiz">
+            <i class="ti ti-school" aria-hidden="true"></i> Ir para quiz
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        <!-- XP Banner -->
+        <div class="xp-header" role="region" aria-label="Seu perfil de jogo">
+          <div class="xp-avatar" id="gameAvatar" aria-hidden="true">JD</div>
+          <div class="xp-info">
+            <div class="xp-name" id="gameName">João Diniz · Nível 7 — Economista</div>
+            <div class="xp-level" id="gameLevel">1.240 XP · Próximo nível em 260 XP</div>
+            <div class="xp-bar"><div class="xp-fill" id="gameXPFill" style="width:83%"></div></div>
+          </div>
+          <div class="xp-coins">
+            <div class="xp-coins-label">Moedas</div>
+            <div class="xp-coins-val" id="gameCoins">740 <i class="ti ti-coin" style="font-size:14px" aria-hidden="true"></i></div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:14px">
+          <!-- Desafios ativos -->
+          <div class="card">
+            <div class="card-title">Desafios ativos</div>
+            <div class="challenge-card" style="margin-bottom:10px" role="region" aria-label="Desafio: 7 dias sem delivery">
+              <div class="challenge-header">
+                <div>
+                  <div class="challenge-title">7 dias sem delivery</div>
+                  <div class="challenge-sub">Dia 4 de 7</div>
+                </div>
+                <span class="tag tag-purple">+150 XP</span>
+              </div>
+              <div class="challenge-progress-row">
+                <div class="bar-bg" style="flex:1"><div class="bar-fill bar-purple" style="width:57%"></div></div>
+                <span style="font-size:11px;color:var(--text2)">57%</span>
+              </div>
+            </div>
+            <div class="challenge-card" style="margin-bottom:10px" role="region" aria-label="Desafio: Registrar 30 dias seguidos">
+              <div class="challenge-header">
+                <div>
+                  <div class="challenge-title">Registrar 30 dias seguidos</div>
+                  <div class="challenge-sub">Dia 18 de 30</div>
+                </div>
+                <span class="tag tag-blue">+300 XP</span>
+              </div>
+              <div class="challenge-progress-row">
+                <div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:60%;background:#378ADD"></div></div>
+                <span style="font-size:11px;color:var(--text2)">60%</span>
+              </div>
+            </div>
+            <div class="challenge-card" role="region" aria-label="Desafio: Guardar 10% da renda, concluído">
+              <div class="challenge-header">
+                <div>
+                  <div class="challenge-title">Guardar 10% da renda</div>
+                  <div class="challenge-sub">Concluído</div>
+                </div>
+                <span class="tag tag-green">+200 XP ✓</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medalhas -->
+          <div class="card">
+            <div class="card-title">Medalhas conquistadas</div>
+            <div class="grid-3" style="gap:8px">
+              <div class="medal" role="img" aria-label="Medalha: Primeira meta, conquistada">
+                <span class="medal-icon" aria-hidden="true">🏅</span>
+                <div>Primeira meta</div>
+              </div>
+              <div class="medal" role="img" aria-label="Medalha: 7 dias seguidos, conquistada">
+                <span class="medal-icon" aria-hidden="true">🔥</span>
+                <div>7 dias seguidos</div>
+              </div>
+              <div class="medal medal-locked" role="img" aria-label="Medalha: Economista, bloqueada">
+                <span class="medal-icon" aria-hidden="true">🏆</span>
+                <div>Economista</div>
+              </div>
+              <div class="medal" role="img" aria-label="Medalha: 1º quiz feito, conquistada">
+                <span class="medal-icon" aria-hidden="true">📚</span>
+                <div>1º quiz feito</div>
+              </div>
+              <div class="medal medal-locked" role="img" aria-label="Medalha: Investidor, bloqueada">
+                <span class="medal-icon" aria-hidden="true">📈</span>
+                <div>Investidor</div>
+              </div>
+              <div class="medal medal-locked" role="img" aria-label="Medalha: Nível 10, bloqueada">
+                <span class="medal-icon" aria-hidden="true">🚀</span>
+                <div>Nível 10</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loja de recompensas -->
+        <div class="card">
+          <div class="card-title">Loja de recompensas</div>
+          <div class="grid-4">
+            <div style="border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center" role="region" aria-label="Recompensa: Tema noturno, 500 moedas">
+              <div style="font-size:28px;margin-bottom:6px" aria-hidden="true">🌙</div>
+              <div style="font-size:12px;font-weight:600">Tema noturno</div>
+              <div style="font-size:11px;color:var(--text2);margin:4px 0">500 moedas</div>
+              <button class="btn-sm" style="font-size:11px;padding:4px 12px" aria-label="Resgatar tema noturno">Resgatar</button>
+            </div>
+            <div style="border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center" role="region" aria-label="Recompensa: Avatar raposa, 300 moedas">
+              <div style="font-size:28px;margin-bottom:6px" aria-hidden="true">🦊</div>
+              <div style="font-size:12px;font-weight:600">Avatar raposa</div>
+              <div style="font-size:11px;color:var(--text2);margin:4px 0">300 moedas</div>
+              <button class="btn-sm" style="font-size:11px;padding:4px 12px" aria-label="Resgatar avatar raposa">Resgatar</button>
+            </div>
+            <div style="border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;opacity:.4" role="region" aria-label="Recompensa: Tema verde, 700 moedas, bloqueado">
+              <div style="font-size:28px;margin-bottom:6px" aria-hidden="true">🎨</div>
+              <div style="font-size:12px;font-weight:600">Tema verde</div>
+              <div style="font-size:11px;color:var(--text2);margin:4px 0">700 moedas</div>
+              <button class="btn-sm" style="font-size:11px;padding:4px 12px" disabled aria-label="Tema verde bloqueado">Bloqueado</button>
+            </div>
+            <div style="border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;opacity:.4" role="region" aria-label="Recompensa: Moldura ouro, 1000 moedas, bloqueada">
+              <div style="font-size:28px;margin-bottom:6px" aria-hidden="true">💎</div>
+              <div style="font-size:12px;font-weight:600">Moldura ouro</div>
+              <div style="font-size:11px;color:var(--text2);margin:4px 0">1000 moedas</div>
+              <button class="btn-sm" style="font-size:11px;padding:4px 12px" disabled aria-label="Moldura ouro bloqueada">Bloqueado</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== INVESTIR ===== -->
+    <section class="page" id="page-investir" aria-labelledby="page-investir-title">
+      <div class="topbar">
+        <div class="topbar-left"><h1 id="page-investir-title">Investir 📈</h1><p>Seus investimentos e dicas</p></div>
+        <div class="topbar-right">
+          <button class="btn-primary" onclick="openModal('modalAporte')" aria-label="Fazer novo aporte">
+            <i class="ti ti-plus" aria-hidden="true"></i> Novo aporte
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        <!-- Resumo -->
+        <div class="grid-3" style="margin-bottom:14px">
+          <div class="metric metric-accent"><div class="metric-label">Total investido</div><div class="metric-value">R$ 2.340</div><div class="metric-sub">Em 3 produtos</div></div>
+          <div class="metric"><div class="metric-label">Rentabilidade</div><div class="metric-value" style="color:var(--green)">+R$ 87,40</div><div class="metric-sub up">+3,7% desde início</div></div>
+          <div class="metric"><div class="metric-label">Rendimento mensal</div><div class="metric-value" style="color:var(--blue)">R$ 24,80</div><div class="metric-sub">Projeção mai/26</div></div>
+        </div>
+
+        <!-- Investimentos -->
+        <div style="margin-bottom:14px">
+          <div class="card-title" style="margin-bottom:10px;font-size:13px">Meus investimentos <span style="font-weight:400;color:var(--text2)">(clique para detalhes)</span></div>
+
+          <!-- Poupança -->
+          <div class="invest-card" style="margin-bottom:10px" onclick="toggleInvest('inv-poupanca')" aria-expanded="false" id="inv-btn-poupanca" aria-label="Poupança, clique para detalhes">
+            <div class="invest-header">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div class="invest-icon" style="background:#EBF4E6;color:var(--green)">🏦</div>
+                <div>
+                  <div style="font-size:14px;font-weight:600">Poupança</div>
+                  <div style="font-size:11px;color:var(--text2)">Banco do Brasil · Sem risco</div>
+                </div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:16px;font-weight:700;font-family:var(--font-mono)">R$ 840,00</div>
+                <span class="tag tag-green">+0,5%/mês</span>
+              </div>
+            </div>
+            <div class="invest-body">
+              <div class="invest-stat"><span class="invest-stat-label">Rentabilidade</span><span class="invest-stat-value" style="color:var(--green)">+R$4,20</span></div>
+              <div class="invest-stat"><span class="invest-stat-label">Rendimento anual est.</span><span class="invest-stat-value">6% a.a.</span></div>
+            </div>
+            <div class="invest-expand" id="inv-poupanca">
+              <p style="font-size:13px;color:var(--text2);margin-bottom:10px">A poupança é a opção mais simples e segura para guardar dinheiro. Protegida pelo FGC até R$250 mil, rende 70% da Selic quando a taxa está abaixo de 8,5% a.a.</p>
+              <div class="grid-2">
+                <div style="background:var(--green-bg);border-radius:8px;padding:10px"><div style="font-size:10px;color:var(--text2)">Vantagens</div><ul style="margin-top:4px;font-size:12px;color:var(--green);list-style:disc;padding-left:14px"><li>Sem imposto de renda</li><li>Liquidez imediata</li><li>Sem taxa de administração</li></ul></div>
+                <div style="background:var(--red-bg);border-radius:8px;padding:10px"><div style="font-size:10px;color:var(--text2)">Desvantagens</div><ul style="margin-top:4px;font-size:12px;color:var(--red);list-style:disc;padding-left:14px"><li>Rendimento baixo vs. inflação</li><li>Regra dos aniversários</li></ul></div>
+              </div>
+              <button class="btn-primary" style="margin-top:12px" onclick="openModal('modalAporte');event.stopPropagation()" aria-label="Adicionar à poupança">
+                <i class="ti ti-plus" aria-hidden="true"></i> Adicionar
+              </button>
+            </div>
+          </div>
+
+          <!-- Tesouro Selic -->
+          <div class="invest-card" style="margin-bottom:10px" onclick="toggleInvest('inv-tesouro')" aria-expanded="false" id="inv-btn-tesouro" aria-label="Tesouro Selic, clique para detalhes">
+            <div class="invest-header">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div class="invest-icon" style="background:var(--blue-bg);color:var(--blue)">🏛️</div>
+                <div>
+                  <div style="font-size:14px;font-weight:600">Tesouro Selic</div>
+                  <div style="font-size:11px;color:var(--text2)">Renda Fixa · Risco baixo</div>
+                </div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:16px;font-weight:700;font-family:var(--font-mono)">R$ 1.000,00</div>
+                <span class="tag tag-blue">+10,5%/ano</span>
+              </div>
+            </div>
+            <div class="invest-body">
+              <div class="invest-stat"><span class="invest-stat-label">Rentabilidade</span><span class="invest-stat-value" style="color:var(--green)">+R$52,50</span></div>
+              <div class="invest-stat"><span class="invest-stat-label">IR sobre ganhos</span><span class="invest-stat-value">15% (>720 dias)</span></div>
+            </div>
+            <div class="invest-expand" id="inv-tesouro">
+              <p style="font-size:13px;color:var(--text2);margin-bottom:10px">O Tesouro Selic acompanha a taxa básica de juros da economia. Ideal para reserva de emergência com rendimento superior à poupança.</p>
+              <div class="grid-2">
+                <div style="background:var(--green-bg);border-radius:8px;padding:10px"><div style="font-size:10px;color:var(--text2)">Vantagens</div><ul style="margin-top:4px;font-size:12px;color:var(--green);list-style:disc;padding-left:14px"><li>Segurança do governo federal</li><li>Alta liquidez</li><li>Rende mais que poupança</li></ul></div>
+                <div style="background:var(--red-bg);border-radius:8px;padding:10px"><div style="font-size:10px;color:var(--text2)">Desvantagens</div><ul style="margin-top:4px;font-size:12px;color:var(--red);list-style:disc;padding-left:14px"><li>Imposto de renda</li><li>Taxa de custódia B3 (0,2%)</li></ul></div>
+              </div>
+              <button class="btn-primary" style="margin-top:12px" onclick="openModal('modalAporte');event.stopPropagation()" aria-label="Adicionar ao Tesouro Selic">
+                <i class="ti ti-plus" aria-hidden="true"></i> Adicionar
+              </button>
+            </div>
+          </div>
+
+          <!-- CDB -->
+          <div class="invest-card" onclick="toggleInvest('inv-cdb')" aria-expanded="false" id="inv-btn-cdb" aria-label="CDB, clique para detalhes">
+            <div class="invest-header">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div class="invest-icon" style="background:var(--purple-bg);color:var(--purple)">📊</div>
+                <div>
+                  <div style="font-size:14px;font-weight:600">CDB 110% CDI</div>
+                  <div style="font-size:11px;color:var(--text2)">Renda Fixa · Risco baixo</div>
+                </div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:16px;font-weight:700;font-family:var(--font-mono)">R$ 500,00</div>
+                <span class="tag tag-purple">+11,5%/ano</span>
+              </div>
+            </div>
+            <div class="invest-body">
+              <div class="invest-stat"><span class="invest-stat-label">Rentabilidade</span><span class="invest-stat-value" style="color:var(--green)">+R$30,70</span></div>
+              <div class="invest-stat"><span class="invest-stat-label">Vencimento</span><span class="invest-stat-value">dez/2026</span></div>
+            </div>
+            <div class="invest-expand" id="inv-cdb">
+              <p style="font-size:13px;color:var(--text2);margin-bottom:10px">CDB (Certificado de Depósito Bancário) é um título emitido por bancos que rende um percentual do CDI. Protegido pelo FGC até R$250 mil.</p>
+              <div class="grid-2">
+                <div style="background:var(--green-bg);border-radius:8px;padding:10px"><div style="font-size:10px;color:var(--text2)">Vantagens</div><ul style="margin-top:4px;font-size:12px;color:var(--green);list-style:disc;padding-left:14px"><li>Protegido pelo FGC</li><li>Rendimento acima da poupança</li></ul></div>
+                <div style="background:var(--red-bg);border-radius:8px;padding:10px"><div style="font-size:10px;color:var(--text2)">Desvantagens</div><ul style="margin-top:4px;font-size:12px;color:var(--red);list-style:disc;padding-left:14px"><li>Imposto de renda</li><li>Carência em alguns produtos</li></ul></div>
+              </div>
+              <button class="btn-primary" style="margin-top:12px" onclick="openModal('modalAporte');event.stopPropagation()" aria-label="Adicionar ao CDB">
+                <i class="ti ti-plus" aria-hidden="true"></i> Adicionar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dicas personalizadas -->
+        <div class="card">
+          <div class="card-title">Dicas para começar a investir</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="rec-card rec-card-green">
+              <span aria-hidden="true">🎯</span> <strong>Reserva de emergência primeiro:</strong> Antes de investir, guarde de 3 a 6 meses de despesas na poupança ou Tesouro Selic.
+            </div>
+            <div class="rec-card rec-card-blue">
+              <span aria-hidden="true">📐</span> <strong>Regra dos 50/30/20:</strong> 50% para necessidades, 30% para desejos, 20% para poupar e investir.
+            </div>
+            <div class="rec-card">
+              <span aria-hidden="true">⚡</span> <strong>Comece com pouco:</strong> O Tesouro Direto aceita investimentos a partir de R$ 30. Comece hoje mesmo!
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== QUIZ ===== -->
+    <section class="page" id="page-quiz" aria-labelledby="page-quiz-title">
+      <div class="topbar">
+        <div class="topbar-left"><h1 id="page-quiz-title">Educação financeira</h1></div>
+        <div class="topbar-right">
+          <span class="tag tag-purple" style="font-size:12px;padding:5px 12px">+50 XP por quiz</span>
+        </div>
+      </div>
+      <div class="content">
+        <div class="grid-2">
+          <!-- Quiz ativo -->
+          <div class="card" id="quizCard" role="region" aria-label="Questão do quiz">
+            <div class="card-header" style="margin-bottom:12px">
+              <span class="card-title">Questão <span id="qNum">2</span> de <span id="qTotal">5</span></span>
+              <div style="display:flex;gap:4px" id="qProgress" aria-label="Progresso do quiz"></div>
+            </div>
+            <div class="card" style="background:var(--bg3);margin-bottom:12px">
+              <p style="font-size:13px;font-weight:600;line-height:1.6" id="qText"></p>
+            </div>
+            <div id="qOptions" aria-live="polite"></div>
+            <div id="qFeedback" style="display:none"></div>
+            <button class="btn-primary" style="width:100%;justify-content:center;margin-top:10px;display:none" id="btnNextQ" onclick="nextQuestion()" aria-label="Próxima questão">
+              Próxima questão <i class="ti ti-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <!-- Módulos -->
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="card">
+              <div class="card-title">Módulos disponíveis</div>
+              <div class="li"><div><div style="font-weight:600">Orçamento pessoal</div><div class="li-sub">5 questões · Básico</div></div><span class="tag tag-green">Concluído</span></div>
+              <div class="li"><div><div style="font-weight:600">Reserva de emergência</div><div class="li-sub">5 questões · Básico</div></div><span class="tag tag-purple">Em curso</span></div>
+              <div class="li"><div><div style="font-weight:600">Investimentos iniciais</div><div class="li-sub">8 questões · Médio</div></div><span class="tag tag-blue">Disponível</span></div>
+              <div class="li" style="border:none"><div><div style="font-weight:600">Crédito consciente</div><div class="li-sub">6 questões · Médio</div></div><span style="font-size:11px;color:var(--text2)">🔒 Bloqueado</span></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Dica personalizada</div>
+              <div style="display:flex;gap:8px;align-items:flex-start">
+                <span style="font-size:20px" aria-hidden="true">💡</span>
+                <p style="font-size:12px;color:var(--text2);line-height:1.6" id="quizTip">Seus gastos com lazer estão em 97% do limite mensal. Considere revisar assinaturas e delivery para liberar espaço no orçamento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PERFIL ===== -->
+    <section class="page" id="page-perfil" aria-labelledby="page-perfil-title">
+      <div class="topbar">
+        <div class="topbar-left"><h1 id="page-perfil-title">Meu perfil</h1></div>
+        <div class="topbar-right">
+          <button class="btn-primary" onclick="savePerfil()" aria-label="Salvar alterações do perfil">
+            <i class="ti ti-check" aria-hidden="true"></i> Salvar alterações
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="grid-2">
+          <!-- Dados pessoais -->
+          <div>
+            <div class="card" style="margin-bottom:14px">
+              <div style="height:80px;background:linear-gradient(135deg,#C0392B 0%,#E24B4A 50%,#7F77DD 100%);border-radius:8px 8px 0 0;margin:-16px -16px 0"></div>
+              <div style="margin-top:-32px;margin-left:16px;margin-bottom:12px">
+                <div class="profile-avatar" id="profileAvatarDisplay" onclick="document.getElementById('avatarInput').click()" aria-label="Alterar foto do perfil" role="button" tabindex="0">
+                  <span id="profileAvatarText">JD</span>
+                  <img id="profileAvatarImg" src="" alt="" style="display:none"/>
+                  <div class="profile-avatar-overlay" aria-hidden="true"><i class="ti ti-camera"></i></div>
+                </div>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)" aria-label="Selecionar foto de perfil"/>
+              </div>
+              <div class="card-title">Dados pessoais</div>
+              <div class="form-row" style="margin-bottom:10px">
+                <div class="form-group-sm">
+                  <label class="form-label-sm" for="prf-nome">Nome</label>
+                  <input class="inp" id="prf-nome" type="text" value="João Diniz" aria-required="true"/>
+                </div>
+                <div class="form-group-sm">
+                  <label class="form-label-sm" for="prf-email">E-mail</label>
+                  <input class="inp" id="prf-email" type="email" value="joao@email.com" aria-required="true"/>
+                </div>
+                <div class="form-group-sm">
+                  <label class="form-label-sm" for="prf-nascimento">Nascimento</label>
+                  <input class="inp" id="prf-nascimento" type="date" value="2002-03-15"/>
+                </div>
+                <div class="form-group-sm">
+                  <label class="form-label-sm" for="prf-renda">Renda mensal</label>
+                  <input class="inp" id="prf-renda" type="number" value="3200" min="0" step="100"/>
+                </div>
+              </div>
+              <div class="form-group-sm" style="margin-bottom:10px">
+                <label class="form-label-sm" for="prf-objetivo">Objetivo financeiro principal</label>
+                <select class="inp" id="prf-objetivo">
+                  <option>Criar reserva de emergência</option>
+                  <option selected>Economizar para viagem</option>
+                  <option>Investir</option>
+                  <option>Sair do endividamento</option>
+                  <option>Comprar algo específico</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Acessibilidade</div>
+              <div class="li">
+                <div><div class="li-title">Alto contraste</div><div class="li-sub">Aumentar contraste das cores</div></div>
+                <label class="toggle-wrap" aria-label="Ativar alto contraste">
+                  <input type="checkbox" id="togHighContrast" onchange="toggleHighContrast(this.checked)" role="switch"/>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="li">
+                <div><div class="li-title">Texto grande</div><div class="li-sub">Aumentar tamanho da fonte</div></div>
+                <label class="toggle-wrap" aria-label="Ativar texto grande">
+                  <input type="checkbox" id="togLargeText" onchange="toggleLargeText(this.checked)" role="switch"/>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="li" style="border:none">
+                <div><div class="li-title">Reduzir animações</div><div class="li-sub">Menos movimentos na tela</div></div>
+                <label class="toggle-wrap" aria-label="Reduzir animações">
+                  <input type="checkbox" id="togReduceMotion" onchange="toggleReduceMotion(this.checked)" role="switch"/>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Segurança e Preferências -->
+          <div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-title">Segurança</div>
+              <div class="form-group-sm" style="margin-bottom:10px">
+                <label class="form-label-sm" for="prf-pass-atual">Senha atual</label>
+                <input class="inp" id="prf-pass-atual" type="password" placeholder="••••••••"/>
+              </div>
+              <div class="form-group-sm" style="margin-bottom:10px">
+                <label class="form-label-sm" for="prf-pass-nova">Nova senha</label>
+                <input class="inp" id="prf-pass-nova" type="password" placeholder="Mín. 8 caracteres"/>
+              </div>
+              <div class="form-group-sm" style="margin-bottom:14px">
+                <label class="form-label-sm" for="prf-pass-conf">Confirmar nova senha</label>
+                <input class="inp" id="prf-pass-conf" type="password" placeholder="Repita a senha"/>
+              </div>
+              <button class="btn-sm" onclick="showToast('Senha atualizada com sucesso!','green')" aria-label="Atualizar senha">Atualizar senha</button>
+            </div>
+
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-title">Preferências de notificação</div>
+              <div class="li">
+                <div><div class="li-title">Alertas de gastos</div><div class="li-sub">Notificar quando atingir 80% do limite</div></div>
+                <label class="toggle-wrap" aria-label="Alertas de gastos">
+                  <input type="checkbox" checked role="switch"/>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="li">
+                <div><div class="li-title">Lembretes de desafios</div><div class="li-sub">Diário · 9h</div></div>
+                <label class="toggle-wrap" aria-label="Lembretes de desafios">
+                  <input type="checkbox" checked role="switch"/>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="li" style="border:none">
+                <div><div class="li-title">Dicas personalizadas</div><div class="li-sub">Semanalmente</div></div>
+                <label class="toggle-wrap" aria-label="Dicas personalizadas">
+                  <input type="checkbox" checked role="switch"/>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Perfil financeiro</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+                <div class="li"><span class="li-sub">Perfil</span><span class="tag tag-blue" id="perfTag">Moderado</span></div>
+                <div class="li"><span class="li-sub">Experiência</span><span style="font-weight:500" id="perfExp">Iniciante</span></div>
+                <div class="li"><span class="li-sub">Objetivo</span><span style="font-weight:500" id="perfObj">Economia de curto prazo</span></div>
+                <div class="li" style="border:none">
+                  <span class="li-sub">Risco tolerado</span><span style="font-weight:500" id="perfRisco">Baixo</span>
+                </div>
+              </div>
+              <button class="btn-sm" style="margin-top:10px" onclick="showPage('quiz')" aria-label="Refazer questionário de perfil">Refazer questionário de perfil</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sair / Danger zone -->
+        <div style="display:flex;justify-content:flex-end;margin-top:14px;gap:10px">
+          <button class="btn-sm" style="color:var(--red);border-color:var(--red)" onclick="doLogout()" aria-label="Sair da conta">
+            <i class="ti ti-logout" aria-hidden="true"></i> Sair da conta
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.main-content -->
+</div><!-- /#screen-app -->
+
+<!-- ===================== NOTIFICATIONS PANEL ===================== -->
+<div class="notif-overlay" id="notifOverlay" onclick="toggleNotif()" aria-hidden="true"></div>
+<div class="notif-panel" id="notifPanel" role="dialog" aria-label="Notificações" aria-hidden="true">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <strong style="font-size:14px">Notificações</strong>
+    <button class="btn-icon" onclick="toggleNotif()" aria-label="Fechar notificações"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="notif-item"><div class="notif-item-title">⚠️ Lazer chegou em 97%</div><div>Você está quase no limite do orçamento de lazer!</div></div>
+  <div class="notif-item"><div class="notif-item-title">🔥 Desafio em andamento</div><div>Faltam 3 dias para completar "7 dias sem delivery"</div></div>
+  <div class="notif-item"><div class="notif-item-title">🏅 Nova medalha desbloqueada!</div><div>Você ganhou a medalha "1º quiz feito"</div></div>
+  <div class="notif-item"><div class="notif-item-title">💡 Dica da semana</div><div>Considere migrar parte da poupança para o Tesouro Selic</div></div>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+<!-- Modal Nova Transação -->
+<div class="modal-overlay" id="modalTransacao" role="dialog" aria-labelledby="mt-title" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="mt-title">Nova transação</span>
+      <button class="modal-close" onclick="closeModal('modalTransacao')" aria-label="Fechar modal"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="auth-tabs" style="margin-bottom:16px">
+      <button class="auth-tab active" id="mt-tab-rec" onclick="setModalTab('rec')">Receita</button>
+      <button class="auth-tab" id="mt-tab-dep" onclick="setModalTab('dep')">Despesa</button>
+    </div>
+    <div class="form-row" style="margin-bottom:10px">
+      <div class="form-group-sm">
+        <label class="form-label-sm" for="mt-valor">Valor</label>
+        <input class="inp" id="mt-valor" type="number" placeholder="R$ 0,00" step="0.01" min="0" aria-required="true"/>
+      </div>
+      <div class="form-group-sm">
+        <label class="form-label-sm" for="mt-cat">Categoria</label>
+        <select class="inp" id="mt-cat" aria-required="true">
+          <option>Salário</option><option>Estágio</option><option>Bolsa</option><option>Freelance</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:14px">
+      <div class="form-group-sm">
+        <label class="form-label-sm" for="mt-data">Data</label>
+        <input class="inp" id="mt-data" type="date" aria-required="true"/>
+      </div>
+      <div class="form-group-sm">
+        <label class="form-label-sm" for="mt-desc">Descrição</label>
+        <input class="inp" id="mt-desc" type="text" placeholder="Ex: salário"/>
+      </div>
+    </div>
+    <button class="btn-primary" style="width:100%;justify-content:center" onclick="addFromModal()" aria-label="Salvar transação">
+      <i class="ti ti-check" aria-hidden="true"></i> Salvar transação
+    </button>
+  </div>
+</div>
+
+<!-- Modal Nova Meta -->
+<div class="modal-overlay" id="modalMeta" role="dialog" aria-labelledby="mm-title" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="mm-title">Nova meta</span>
+      <button class="modal-close" onclick="closeModal('modalMeta')" aria-label="Fechar modal"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-group-sm" style="margin-bottom:10px">
+      <label class="form-label-sm" for="mm-nome">Nome da meta</label>
+      <input class="inp" id="mm-nome" type="text" placeholder="Ex: Viagem de férias" aria-required="true"/>
+    </div>
+    <div class="form-row" style="margin-bottom:10px">
+      <div class="form-group-sm">
+        <label class="form-label-sm" for="mm-valor">Valor alvo</label>
+        <input class="inp" id="mm-valor" type="number" placeholder="R$ 0,00" step="0.01" min="0" aria-required="true"/>
+      </div>
+      <div class="form-group-sm">
+        <label class="form-label-sm" for="mm-atual">Valor atual</label>
+        <input class="inp" id="mm-atual" type="number" placeholder="R$ 0,00" step="0.01" min="0"/>
+      </div>
+    </div>
+    <div class="form-group-sm" style="margin-bottom:14px">
+      <label class="form-label-sm" for="mm-prazo">Prazo</label>
+      <input class="inp" id="mm-prazo" type="month" aria-required="true"/>
+    </div>
+    <button class="btn-primary" style="width:100%;justify-content:center" onclick="addMeta()" aria-label="Criar meta">
+      <i class="ti ti-target" aria-hidden="true"></i> Criar meta
+    </button>
+  </div>
+</div>
+
+<!-- Modal Aporte -->
+<div class="modal-overlay" id="modalAporte" role="dialog" aria-labelledby="ma-title" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="ma-title">Novo aporte</span>
+      <button class="modal-close" onclick="closeModal('modalAporte')" aria-label="Fechar modal"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-group-sm" style="margin-bottom:10px">
+      <label class="form-label-sm" for="ma-tipo">Investimento</label>
+      <select class="inp" id="ma-tipo" aria-required="true">
+        <option>Poupança</option>
+        <option>Tesouro Selic</option>
+        <option>CDB 110% CDI</option>
+      </select>
+    </div>
+    <div class="form-group-sm" style="margin-bottom:14px">
+      <label class="form-label-sm" for="ma-valor">Valor</label>
+      <input class="inp" id="ma-valor" type="number" placeholder="R$ 0,00" step="0.01" min="30" aria-required="true"/>
+    </div>
+    <button class="btn-primary" style="width:100%;justify-content:center" onclick="confirmarAporte()" aria-label="Confirmar aporte">
+      <i class="ti ti-check" aria-hidden="true"></i> Confirmar aporte
+    </button>
+  </div>
+</div>
+
+<!-- ===================== LIBRAS BUTTON ===================== -->
+<button class="libras-btn" id="librasBtn" onclick="toggleLibras()" aria-label="Acessibilidade - Libras e opções de acessibilidade" aria-expanded="false">
+  <i class="ti ti-hand-click" aria-hidden="true"></i>
+</button>
+<div class="libras-panel" id="librasPanel" role="dialog" aria-label="Opções de acessibilidade e Libras" aria-hidden="true">
+  <h3><i class="ti ti-accessibility" aria-hidden="true"></i> Acessibilidade</h3>
+  <div class="libras-shortcuts">
+    <div class="libras-shortcut" onclick="toggleHighContrast()" tabindex="0" role="button" aria-label="Ativar alto contraste">
+      <i class="ti ti-contrast"></i> Alto contraste
+    </div>
+    <div class="libras-shortcut" onclick="toggleLargeText()" tabindex="0" role="button" aria-label="Aumentar texto">
+      <i class="ti ti-letter-case"></i> Texto grande
+    </div>
+    <div class="libras-shortcut" onclick="openLibrasGuide()" tabindex="0" role="button" aria-label="Abrir guia em Libras">
+      <i class="ti ti-hand-stop"></i> Guia em Libras
+    </div>
+    <div class="libras-shortcut" onclick="readPage()" tabindex="0" role="button" aria-label="Ler página em voz alta">
+      <i class="ti ti-volume"></i> Ler em voz alta
+    </div>
+    <div class="libras-shortcut" style="font-size:11px;color:var(--text3);cursor:default">
+      <i class="ti ti-info-circle"></i> Atalho: Alt + A
+    </div>
+  </div>
+</div>
+
+<!-- Toggle styles for accessibility -->
+<style>
+.toggle-wrap{position:relative;display:inline-flex;align-items:center;cursor:pointer;width:42px;height:24px;flex-shrink:0}
+.toggle-wrap input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:12px;transition:var(--transition)}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:var(--transition)}
+.toggle-wrap input:checked + .toggle-slider{background:var(--accent)}
+.toggle-wrap input:checked + .toggle-slider::before{transform:translateX(18px)}
+
+/* High contrast mode */
+body.high-contrast{filter:contrast(1.4)}
+body.large-text{font-size:16px}
+body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+</style>
+
+<script>
+// ==================== STATE ====================
+const state = {
+  user: { name: 'João Diniz', email: 'joao@email.com', initials: 'JD', level: 7, xp: 1240, coins: 740, avatarUrl: '' },
+  transacoes: [
+    { id:1, data:'19/05', desc:'iFood', cat:'Alimentação', pag:'Crédito', tipo:'despesa', valor:42.90 },
+    { id:2, data:'17/05', desc:'Estágio', cat:'Estágio', pag:'Transf.', tipo:'receita', valor:800.00 },
+    { id:3, data:'16/05', desc:'Bilhete único', cat:'Transporte', pag:'Débito', tipo:'despesa', valor:19.50 },
+    { id:4, data:'15/05', desc:'Netflix', cat:'Lazer', pag:'Crédito', tipo:'despesa', valor:39.90 },
+    { id:5, data:'10/05', desc:'Bolsa acadêmica', cat:'Bolsa', pag:'Depósito', tipo:'receita', valor:600.00 },
+    { id:6, data:'05/05', desc:'Farmácia', cat:'Saúde', pag:'Débito', tipo:'despesa', valor:38.00 },
+  ],
+  metas: [
+    { id:1, nome:'Viagem de férias', atual:1240, total:2000, prazo:'dez/2026', color:'var(--green-mid)' },
+    { id:2, nome:'Reserva de emergência', atual:1400, total:5000, prazo:'jun/2027', color:'#378ADD' },
+  ],
+  onboardAnswers: {},
+  quizIndex: 0,
+  quizAnswered: false,
+};
+
+// ==================== QUIZ DATA ====================
+const quizQuestions = [
+  {
+    q: 'O que é a "reserva de emergência" e quantos meses de despesas ela deve cobrir idealmente?',
+    opts: ['A) Fundo para investimentos de longo prazo','B) Poupança para cobrir imprevistos (3 a 6 meses)','C) Reserva para compras planejadas','D) Limite disponível no cartão de crédito'],
+    correct: 1,
+    feedback: 'A reserva de emergência é uma poupança para cobrir de 3 a 6 meses de despesas fixas em situações inesperadas como demissão ou problemas de saúde.'
+  },
+  {
+    q: 'Qual a diferença entre Tesouro Selic e Poupança?',
+    opts: ['A) Não há diferença, são equivalentes','B) O Tesouro Selic costuma render mais e tem liquidez diária','C) A Poupança tem mais risco que o Tesouro','D) O Tesouro Selic não tem garantia do governo'],
+    correct: 1,
+    feedback: 'O Tesouro Selic segue a taxa básica de juros e costuma render mais que a poupança, especialmente com a Selic alta. Ambos têm alta liquidez.'
+  },
+  {
+    q: 'O que significa CDI?',
+    opts: ['A) Certificado de Débito Imobiliário','B) Contrato de Depósito Interbancário','C) Certificado de Depósito Interbancário','D) Crédito Direto ao Investidor'],
+    correct: 2,
+    feedback: 'CDI (Certificado de Depósito Interbancário) é a taxa usada nas operações entre bancos e serve como referência para muitos investimentos de renda fixa.'
+  },
+  {
+    q: 'Qual a regra do 50-30-20 para gestão financeira?',
+    opts: ['A) 50% lazer, 30% poupança, 20% necessidades','B) 50% necessidades, 30% desejos, 20% poupança/investimentos','C) 50% investimentos, 30% necessidades, 20% lazer','D) Não existe essa regra'],
+    correct: 1,
+    feedback: 'A regra 50/30/20 divide a renda em: 50% para necessidades básicas, 30% para desejos pessoais, e 20% para poupar e investir.'
+  },
+  {
+    q: 'O que é o FGC (Fundo Garantidor de Créditos)?',
+    opts: ['A) Um fundo de investimento em ações','B) Uma garantia do governo para todos os investimentos','C) Uma garantia para depósitos em bancos até R$250 mil','D) Um seguro obrigatório para financiamentos'],
+    correct: 2,
+    feedback: 'O FGC protege depósitos e investimentos em bancos (como poupança e CDB) até R$250 mil por CPF e por instituição financeira.'
+  }
+];
+
+// ==================== ONBOARDING QUESTIONS ====================
+const onboardQs = [
+  {
+    q: 'Qual é a sua principal fonte de renda?',
+    desc: 'Isso nos ajuda a entender seu contexto financeiro',
+    opts: [
+      { icon:'🎓', label:'Bolsa de estudos / Estágio' },
+      { icon:'💼', label:'Emprego CLT' },
+      { icon:'🛠️', label:'Freelance / autônomo' },
+      { icon:'👨‍👩‍👧', label:'Ajuda financeira familiar' },
+    ]
+  },
+  {
+    q: 'Qual é seu maior desafio financeiro?',
+    desc: 'Vamos personalizar as dicas para você',
+    opts: [
+      { icon:'💸', label:'Gastar mais do que ganho' },
+      { icon:'🎯', label:'Não consigo poupar regularmente' },
+      { icon:'📈', label:'Não sei como investir' },
+      { icon:'💳', label:'Tenho dívidas a pagar' },
+    ]
+  },
+  {
+    q: 'Qual é seu objetivo financeiro principal?',
+    desc: 'Seu objetivo guia nossas recomendações',
+    opts: [
+      { icon:'🛡️', label:'Criar reserva de emergência' },
+      { icon:'✈️', label:'Poupar para uma viagem/compra' },
+      { icon:'📊', label:'Começar a investir' },
+      { icon:'💰', label:'Quitar dívidas' },
+    ]
+  },
+  {
+    q: 'Como você lida com investimentos hoje?',
+    desc: 'Vamos sugerir o nível ideal de investimentos para você',
+    opts: [
+      { icon:'🔰', label:'Nunca investi, quero começar' },
+      { icon:'🏦', label:'Só tenho poupança' },
+      { icon:'📉', label:'Já conheço renda fixa' },
+      { icon:'🚀', label:'Invisto em renda variável' },
+    ]
+  },
+  {
+    q: 'Quanto da sua renda você consegue guardar por mês?',
+    desc: 'Isso ajuda na criação de metas realistas',
+    opts: [
+      { icon:'😅', label:'Quase nada (menos de 5%)' },
+      { icon:'😊', label:'Pouco (5% a 10%)' },
+      { icon:'😎', label:'Razoável (10% a 20%)' },
+      { icon:'🤑', label:'Bastante (mais de 20%)' },
+    ]
+  },
+  {
+    q: 'Você tem alguma necessidade especial de acessibilidade?',
+    desc: 'Queremos garantir a melhor experiência para você',
+    opts: [
+      { icon:'👁️', label:'Preciso de alto contraste' },
+      { icon:'🔤', label:'Prefiro textos maiores' },
+      { icon:'🤟', label:'Prefiro conteúdo em Libras' },
+      { icon:'✅', label:'Nenhuma necessidade especial' },
+    ]
+  }
+];
+
+let onboardStep = 0;
+
+// ==================== AUTH ====================
+function setAuthMode(mode) {
+  ['login','register'].forEach(m => {
+    document.getElementById('tab-'+m).classList.toggle('active', m===mode);
+    document.getElementById('panel-'+m).style.display = m===mode ? 'block' : 'none';
+    document.getElementById('tab-'+m).setAttribute('aria-selected', m===mode);
+  });
+}
+
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  const isPass = inp.type === 'password';
+  inp.type = isPass ? 'text' : 'password';
+  btn.querySelector('i').className = isPass ? 'ti ti-eye-off' : 'ti ti-eye';
+  btn.setAttribute('aria-label', isPass ? 'Ocultar senha' : 'Mostrar senha');
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) { showToast('Preencha e-mail e senha', 'red'); return; }
+  // Simulate login - demo enters app directly
+  state.user.name = 'João Diniz';
+  initApp();
+  showScreen('screen-app');
+}
+
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  if (!name || !email || !pass) { showToast('Preencha todos os campos', 'red'); return; }
+  if (pass.length < 8) { showToast('Senha muito curta (mín. 8 caracteres)', 'red'); return; }
+  state.user.name = name;
+  state.user.initials = name.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+  onboardStep = 0;
+  state.onboardAnswers = {};
+  initOnboarding();
+  showScreen('screen-onboarding');
+}
+
+function doLogout() {
+  showScreen('screen-auth');
+}
+
+// ==================== ONBOARDING ====================
+function initOnboarding() {
+  renderOnboardProgress();
+  renderOnboardQuestion();
+}
+
+function renderOnboardProgress() {
+  const prog = document.getElementById('onboardProgress');
+  prog.innerHTML = onboardQs.map((_,i) => {
+    let cls = 'onboard-step-dot';
+    if (i < onboardStep) cls += ' done';
+    else if (i === onboardStep) cls += ' active';
+    return `<div class="${cls}" aria-hidden="true"></div>`;
+  }).join('');
+  document.getElementById('onboardCounter').textContent = `${onboardStep+1} de ${onboardQs.length}`;
+  document.getElementById('btnOnboardBack').style.visibility = onboardStep > 0 ? 'visible' : 'hidden';
+}
+
+function renderOnboardQuestion() {
+  const q = onboardQs[onboardStep];
+  const selected = state.onboardAnswers[onboardStep];
+  const html = `
+    <div class="onboard-q">${q.q}</div>
+    <div class="onboard-qdesc">${q.desc}</div>
+    <div class="onboard-opts" role="listbox" aria-label="${q.q}">
+      ${q.opts.map((o,i) => `
+        <div class="onboard-opt${selected===i?' selected':''}" 
+             onclick="selectOnboard(${i})" 
+             role="option" 
+             aria-selected="${selected===i}"
+             tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' ')selectOnboard(${i})">
+          <span aria-hidden="true">${o.icon}</span> ${o.label}
+        </div>
+      `).join('')}
+    </div>`;
+  document.getElementById('onboardContent').innerHTML = html;
+  document.getElementById('btnOnboardNext').disabled = selected === undefined;
+}
+
+function selectOnboard(idx) {
+  state.onboardAnswers[onboardStep] = idx;
+  renderOnboardQuestion();
+  document.getElementById('btnOnboardNext').disabled = false;
+}
+
+function onboardNext() {
+  if (state.onboardAnswers[onboardStep] === undefined) return;
+  if (onboardStep < onboardQs.length - 1) {
+    onboardStep++;
+    renderOnboardProgress();
+    renderOnboardQuestion();
+    document.getElementById('btnOnboardNext').innerHTML = onboardStep === onboardQs.length - 1 
+      ? 'Começar <i class="ti ti-rocket" aria-hidden="true"></i>'
+      : 'Próxima <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+  } else {
+    applyOnboardProfile();
+    initApp();
+    showScreen('screen-app');
+  }
+}
+
+function onboardBack() {
+  if (onboardStep > 0) {
+    onboardStep--;
+    renderOnboardProgress();
+    renderOnboardQuestion();
+    document.getElementById('btnOnboardNext').innerHTML = onboardStep === onboardQs.length - 1
+      ? 'Começar <i class="ti ti-rocket" aria-hidden="true"></i>'
+      : 'Próxima <i class="ti ti-arrow-right" aria-hidden="true"></i>';
+  }
+}
+
+function applyOnboardProfile() {
+  // Access need
+  const accAnswer = state.onboardAnswers[5];
+  if (accAnswer === 0) toggleHighContrast(true);
+  if (accAnswer === 1) toggleLargeText(true);
+
+  // Investment profile
+  const invAnswer = state.onboardAnswers[3];
+  const profiles = ['Conservador','Conservador','Moderado','Arrojado'];
+  const exps = ['Iniciante','Iniciante','Intermediário','Avançado'];
+  document.getElementById('perfTag').textContent = profiles[invAnswer]||'Moderado';
+  document.getElementById('perfExp').textContent = exps[invAnswer]||'Iniciante';
+
+  // Customize dashboard recommendation
+  const challengeAnswers = state.onboardAnswers[1];
+  const recs = [
+    'Você tende a gastar mais do que ganha. Definir um orçamento por categoria pode mudar isso!',
+    'Tente a estratégia "pague-se primeiro": separe a poupança assim que receber.',
+    'Comece pelo Tesouro Selic — seguro, fácil e com rendimento superior à poupança.',
+    'Priorize quitar dívidas antes de investir. Comece pelas com maior juros.'
+  ];
+  const rec = document.getElementById('dashRec');
+  if (rec && recs[challengeAnswers]) {
+    rec.innerHTML = `<span aria-hidden="true">💡</span> <strong>Dica para você:</strong> ${recs[challengeAnswers]}`;
+  }
+}
+
+// ==================== APP INIT ====================
+function initApp() {
+  const u = state.user;
+  // Update sidebar
+  document.getElementById('sidebarName').textContent = u.name;
+  document.getElementById('sidebarLevel').textContent = `Nível ${u.level} · ${u.xp} XP`;
+  const initials = u.name.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sidebarAvatar').textContent = initials;
+  document.getElementById('dashGreeting').textContent = u.name.split(' ')[0];
+
+  // Game page
+  document.getElementById('gameName').textContent = `${u.name} · Nível ${u.level} — Economista`;
+  document.getElementById('gameLevel').textContent = `${u.xp} XP · Próximo nível em ${1500-u.xp} XP`;
+  document.getElementById('gameAvatar').textContent = initials;
+  document.getElementById('gameCoins').innerHTML = `${u.coins} <i class="ti ti-coin" style="font-size:14px" aria-hidden="true"></i>`;
+
+  // Date
+  const now = new Date();
+  const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('dashDate').textContent = `${months[now.getMonth()]} de ${now.getFullYear()}`;
+
+  // Set today's date in forms
+  const today = now.toISOString().split('T')[0];
+  ['rec-data','dep-data','mt-data'].forEach(id => { const el=document.getElementById(id); if(el) el.value=today; });
+
+  renderTransacoes();
+  renderMetas();
+  updateMetrics();
+  renderCharts();
+  initQuiz();
+  showPage('dashboard');
+}
+
+// ==================== NAVIGATION ====================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    n.removeAttribute('aria-current');
+  });
+  const page = document.getElementById('page-'+name);
+  const nav = document.getElementById('nav-'+name);
+  if (page) page.classList.add('active');
+  if (nav) { nav.classList.add('active'); nav.setAttribute('aria-current','page'); }
+  if (name === 'relatorio') initRelatorioCharts();
+  return false;
+}
+
+// ==================== TRANSACTIONS ====================
+function addTransacao(tipo) {
+  const prefix = tipo === 'receita' ? 'rec' : 'dep';
+  const valor = parseFloat(document.getElementById(prefix+'-valor').value);
+  const cat = document.getElementById(prefix+'-cat').value;
+  const data = document.getElementById(prefix+'-data').value;
+  const desc = document.getElementById(prefix+'-desc') ? document.getElementById(prefix+'-desc').value : '';
+
+  if (!valor || valor <= 0) { showToast('Informe um valor válido', 'red'); return; }
+  if (!data) { showToast('Informe a data', 'red'); return; }
+
+  const d = new Date(data);
+  const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+  state.transacoes.unshift({
+    id: Date.now(), data: dateStr, desc: desc || cat, cat, pag: tipo==='receita' ? 'Transf.' : document.getElementById('dep-pag')?.value || 'Débito', tipo, valor
+  });
+  // Reset
+  document.getElementById(prefix+'-valor').value = '';
+  if (document.getElementById(prefix+'-desc')) document.getElementById(prefix+'-desc').value = '';
+
+  renderTransacoes();
+  updateMetrics();
+  showToast(tipo==='receita' ? 'Receita adicionada! +10 XP 🎉' : 'Despesa registrada!', tipo==='receita'?'green':'');
+}
+
+function addFromModal() {
+  const valor = parseFloat(document.getElementById('mt-valor').value);
+  const cat = document.getElementById('mt-cat').value;
+  const data = document.getElementById('mt-data').value;
+  const desc = document.getElementById('mt-desc').value;
+  const isRec = document.getElementById('mt-tab-rec').classList.contains('active');
+  if (!valor||valor<=0||!data) { showToast('Preencha todos os campos','red'); return; }
+  const d = new Date(data);
+  const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+  state.transacoes.unshift({ id:Date.now(), data:dateStr, desc:desc||cat, cat, pag: isRec?'Transf.':'Débito', tipo:isRec?'receita':'despesa', valor });
+  renderTransacoes(); updateMetrics(); closeModal('modalTransacao');
+  showToast('Transação salva! 🎉', 'green');
+}
+
+function deleteTransacao(id) {
+  state.transacoes = state.transacoes.filter(t => t.id !== id);
+  renderTransacoes(); updateMetrics();
+}
+
+function renderTransacoes() {
+  const search = (document.getElementById('searchTransacao')?.value||'').toLowerCase();
+  const filtered = state.transacoes.filter(t => 
+    t.desc.toLowerCase().includes(search) || t.cat.toLowerCase().includes(search)
+  );
+  
+  // Dashboard preview (last 5)
+  const dashEl = document.getElementById('dashTransacoes');
+  if (dashEl) {
+    dashEl.innerHTML = state.transacoes.slice(0,5).map(t => `
+      <div class="li">
+        <div>
+          <div class="li-title">${t.cat} — ${t.desc}</div>
+          <div class="li-sub">${t.data} · ${t.pag}</div>
+        </div>
+        <div style="color:${t.tipo==='receita'?'var(--green)':'var(--red)'};font-weight:700;font-family:var(--font-mono)">
+          ${t.tipo==='receita'?'+':'-'}R$${t.valor.toFixed(2)}
+        </div>
+      </div>`).join('');
+  }
+
+  // Full table
+  const tbody = document.getElementById('tbodyTransacoes');
+  if (!tbody) return;
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:20px">Nenhuma transação encontrada</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(t => `
+    <tr>
+      <td>${t.data}</td>
+      <td>${t.desc}</td>
+      <td><span style="font-size:12px">${t.cat}</span></td>
+      <td><span style="font-size:12px;color:var(--text2)">${t.pag}</span></td>
+      <td><span class="tag ${t.tipo==='receita'?'tag-green':'tag-red'}">${t.tipo==='receita'?'Receita':'Despesa'}</span></td>
+      <td style="text-align:right" class="${t.tipo==='receita'?'table-amount-pos':'table-amount-neg'}">${t.tipo==='receita'?'+':'-'}R$${t.valor.toFixed(2)}</td>
+      <td>
+        <button class="btn-icon" onclick="deleteTransacao(${t.id})" style="width:26px;height:26px" aria-label="Excluir transação ${t.desc}">
+          <i class="ti ti-trash" style="font-size:13px;color:var(--red)" aria-hidden="true"></i>
+        </button>
+      </td>
+    </tr>`).join('');
+}
+
+function updateMetrics() {
+  const receitas = state.transacoes.filter(t=>t.tipo==='receita').reduce((a,t)=>a+t.valor,0);
+  const despesas = state.transacoes.filter(t=>t.tipo==='despesa').reduce((a,t)=>a+t.valor,0);
+  const saldo = receitas - despesas;
+  const economia = receitas > 0 ? Math.max(0, saldo) : 0;
+
+  const fmt = v => `R$ ${v.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0})}`;
+  document.getElementById('m-saldo').textContent = fmt(saldo);
+  document.getElementById('m-receitas').textContent = fmt(receitas);
+  document.getElementById('m-despesas').textContent = fmt(despesas);
+  document.getElementById('m-economia').textContent = fmt(economia);
+
+  document.getElementById('totalRec').textContent = `Receitas +R$${receitas.toFixed(0)}`;
+  document.getElementById('totalDep').textContent = `Despesas -R$${despesas.toFixed(0)}`;
+
+  // Dynamic recommendation
+  updateRecommendation(receitas, despesas, saldo);
+
+  // Update charts if on dashboard
+  if (document.getElementById('page-dashboard').classList.contains('active')) {
+    renderDashChart(dashChartType);
+  }
+}
+
+function updateRecommendation(receitas, despesas, saldo) {
+  const rec = document.getElementById('dashRec');
+  if (!rec) return;
+
+  const pct = receitas > 0 ? (despesas / receitas * 100) : 0;
+  const economiaPct = receitas > 0 ? ((receitas-despesas)/receitas*100) : 0;
+
+  // Category analysis
+  const catTotals = {};
+  state.transacoes.filter(t=>t.tipo==='despesa').forEach(t => {
+    catTotals[t.cat] = (catTotals[t.cat]||0) + t.valor;
+  });
+  const topCat = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0];
+
+  let icon = '💡', cor = 'var(--green-mid)', msg = '';
+  if (pct > 90) {
+    icon = '⚠️'; cor = 'var(--red)';
+    msg = `Atenção! Suas despesas representam <strong>${pct.toFixed(0)}%</strong> da sua renda. Tente reduzir gastos com <strong>${topCat?topCat[0]:'lazer'}</strong> para equilibrar o orçamento.`;
+  } else if (pct > 70) {
+    icon = '📊'; cor = 'var(--amber)';
+    msg = `Você está gastando <strong>${pct.toFixed(0)}%</strong> da sua renda. Sua maior categoria é <strong>${topCat?topCat[0]:'Alimentação'}</strong>. Considere criar um limite para ela.`;
+  } else if (economiaPct >= 20) {
+    icon = '🎉'; cor = 'var(--green)';
+    msg = `Parabéns! Você está economizando <strong>${economiaPct.toFixed(0)}%</strong> da sua renda. Que tal direcionar parte disso para o Tesouro Selic?`;
+  } else {
+    icon = '💡'; cor = 'var(--green-mid)';
+    msg = `Dica: a regra 50/30/20 sugere guardar pelo menos 20% da renda. Você está em <strong>${economiaPct.toFixed(0)}%</strong>. Pequenos ajustes fazem grande diferença!`;
+  }
+
+  rec.innerHTML = `<span aria-hidden="true">${icon}</span> <strong style="color:${cor}">Análise do mês:</strong> ${msg}`;
+}
+
+// ==================== METAS ====================
+function addMeta() {
+  const nome = document.getElementById('mm-nome').value.trim();
+  const total = parseFloat(document.getElementById('mm-valor').value);
+  const atual = parseFloat(document.getElementById('mm-atual').value)||0;
+  const prazo = document.getElementById('mm-prazo').value;
+  if (!nome || !total || !prazo) { showToast('Preencha todos os campos', 'red'); return; }
+  const colors = ['var(--green-mid)','#378ADD','var(--xp)','#EF9F27','var(--red-mid)'];
+  state.metas.push({ id:Date.now(), nome, atual, total, prazo, color: colors[state.metas.length % colors.length] });
+  renderMetas();
+  closeModal('modalMeta');
+  showToast('Meta criada! +25 XP 🎯', 'green');
+}
+
+function renderMetas() {
+  const grid = document.getElementById('metasGrid');
+  if (!grid) return;
+  const pct = m => Math.min(100, Math.round(m.atual/m.total*100));
+  grid.innerHTML = state.metas.map(m => `
+    <div class="card" role="region" aria-label="Meta: ${m.nome}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div><div style="font-size:13px;font-weight:600">${m.nome}</div><div class="li-sub">Prazo: ${m.prazo}</div></div>
+        <span class="tag tag-green">${pct(m)}%</span>
+      </div>
+      <div style="font-size:18px;font-weight:700;color:var(--green);font-family:var(--font-mono)">R$ ${m.atual.toLocaleString('pt-BR')}</div>
+      <div class="li-sub" style="margin-bottom:8px">de R$ ${m.total.toLocaleString('pt-BR')}</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${pct(m)}%;background:${m.color}"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text2)">
+        <span>Faltam R$ ${(m.total-m.atual).toLocaleString('pt-BR')}</span>
+      </div>
+    </div>`).join('') + `
+    <div class="card" style="border:1px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;min-height:140px"
+         onclick="openModal('modalMeta')" role="button" tabindex="0" aria-label="Adicionar nova meta"
+         onkeydown="if(event.key==='Enter')openModal('modalMeta')">
+      <i class="ti ti-plus" style="font-size:24px;color:var(--text3);margin-bottom:6px" aria-hidden="true"></i>
+      <div style="font-size:12px;color:var(--text2)">Adicionar nova meta</div>
+    </div>`;
+}
+
+// ==================== CHARTS ====================
+let chartInstances = {};
+
+function initChart(id, config) {
+  if (chartInstances[id]) { chartInstances[id].destroy(); }
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  chartInstances[id] = new Chart(ctx, config);
+}
+
+let dashChartType = 'bar';
+function renderCharts() {
+  renderDashChart(dashChartType);
+  initChart('chartDashMensal', {
+    type: 'line',
+    data: {
+      labels: ['Fev','Mar','Abr','Mai','Jun*'],
+      datasets: [
+        { label:'Receitas', data:[2800,3100,2950,3200,3100], borderColor:'#2D6A1F', backgroundColor:'rgba(45,106,31,.08)', fill:true, tension:.4, pointRadius:4, pointBackgroundColor:'#2D6A1F' },
+        { label:'Despesas', data:[2100,2200,2060,1960,1900], borderColor:'#C0392B', backgroundColor:'rgba(192,57,43,.06)', fill:true, tension:.4, pointRadius:4, pointBackgroundColor:'#C0392B' }
+      ]
+    },
+    options: {
+      responsive:true,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ position:'bottom', labels:{ font:{size:11}, padding:12 } }, tooltip:{ callbacks:{ label: ctx => `${ctx.dataset.label}: R$${ctx.parsed.y.toLocaleString('pt-BR')}` } } },
+      scales:{ x:{ grid:{display:false}, ticks:{font:{size:11}} }, y:{ grid:{color:'rgba(0,0,0,.04)'}, ticks:{ font:{size:10}, callback: v => 'R$'+v.toLocaleString('pt-BR') } } },
+      animation:{duration:600}
+    }
+  });
+}
+
+function switchDashChart(type) {
+  dashChartType = type;
+  ['bar','doughnut'].forEach(t => {
+    const btn = document.getElementById('btnChart'+( t==='bar'?'Bar':'Dough'));
+    if(btn){
+      btn.style.background = t===type ? 'var(--text)' : '';
+      btn.style.color = t===type ? '#fff' : '';
+      btn.style.borderColor = t===type ? 'transparent' : '';
+      btn.setAttribute('aria-pressed', t===type);
+    }
+  });
+  renderDashChart(type);
+}
+
+function renderDashChart(type) {
+  const cats = ['Aliment.','Transp.','Lazer','Saúde','Outros'];
+  const vals = [380,80,195,50,60];
+  const colors = ['#E24B4A','#378ADD','#7F77DD','#1D9E75','#EF9F27'];
+
+  // Compute from real transactions if available
+  const catMap = {};
+  state.transacoes.filter(t=>t.tipo==='despesa').forEach(t => {
+    const key = t.cat.length > 8 ? t.cat.substring(0,7)+'.' : t.cat;
+    catMap[key] = (catMap[key]||0) + t.valor;
+  });
+  const dynLabels = Object.keys(catMap).length >= 2 ? Object.keys(catMap) : cats;
+  const dynVals = Object.keys(catMap).length >= 2 ? Object.values(catMap) : vals;
+
+  if (type === 'bar') {
+    initChart('chartDashCat', {
+      type: 'bar',
+      data: { labels: dynLabels, datasets: [{ data: dynVals, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
+      options: { responsive:true, plugins:{ legend:{display:false} }, scales:{ x:{grid:{display:false},ticks:{font:{size:10}}}, y:{display:false,grid:{display:false}} }, animation:{duration:500} }
+    });
+  } else {
+    initChart('chartDashCat', {
+      type: 'doughnut',
+      data: { labels: dynLabels, datasets: [{ data: dynVals, backgroundColor: colors, borderWidth: 2, hoverOffset: 4 }] },
+      options: { responsive:true, cutout:'65%', plugins:{ legend:{ position:'bottom', labels:{ font:{size:10}, padding:8 } } }, animation:{duration:500} }
+    });
+  }
+}
+
+function initRelatorioCharts() {
+  initChart('chartRelCat', {
+    type: 'doughnut',
+    data: {
+      labels: ['Alimentação','Transporte','Lazer','Saúde','Outros'],
+      datasets: [{ data:[380,80,195,50,60], backgroundColor:['#E24B4A','#378ADD','#7F77DD','#1D9E75','#EF9F27'], borderWidth:0, hoverOffset:4 }]
+    },
+    options: { responsive:true, plugins:{ legend:{position:'bottom',labels:{font:{size:11},padding:10}} }, animation:{duration:600} }
+  });
+  initChart('chartRelMes', {
+    type: 'bar',
+    data: {
+      labels: ['Fev','Mar','Abr','Mai','Jun*'],
+      datasets: [
+        { label:'Receitas', data:[2800,3100,2950,3200,3100], backgroundColor:'#2D6A1F', borderRadius:3 },
+        { label:'Despesas', data:[2100,2200,2060,1960,1900], backgroundColor:'#C0392B', borderRadius:3 }
+      ]
+    },
+    options: { responsive:true, plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}, scales:{ x:{grid:{display:false}}, y:{grid:{color:'rgba(0,0,0,.04)'}} }, animation:{duration:600} }
+  });
+}
+
+// ==================== QUIZ ====================
+function initQuiz() {
+  state.quizIndex = 0;
+  state.quizAnswered = false;
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const q = quizQuestions[state.quizIndex];
+  if (!q) return;
+  document.getElementById('qNum').textContent = state.quizIndex+1;
+  document.getElementById('qTotal').textContent = quizQuestions.length;
+  document.getElementById('qText').textContent = q.q;
+
+  // Progress dots
+  const prog = document.getElementById('qProgress');
+  prog.innerHTML = quizQuestions.map((_,i) => {
+    let bg = 'var(--bg3)';
+    if (i < state.quizIndex) bg = 'var(--xp)';
+    else if (i === state.quizIndex) bg = 'var(--xp)';
+    return `<div style="width:22px;height:4px;border-radius:2px;background:${i<=state.quizIndex?'var(--xp)':'var(--bg3)'}"></div>`;
+  }).join('');
+
+  // Options
+  const letters = ['A','B','C','D'];
+  document.getElementById('qOptions').innerHTML = q.opts.map((o,i) => `
+    <div class="quiz-opt" id="qopt-${i}" onclick="answerQuiz(${i})" 
+         role="radio" aria-checked="false" tabindex="0"
+         onkeydown="if(event.key==='Enter'||event.key===' ')answerQuiz(${i})">
+      <span class="quiz-opt-letter" aria-hidden="true">${letters[i]}</span> ${o.replace(/^[A-D]\) /,'')}
+    </div>`).join('');
+  document.getElementById('qFeedback').style.display = 'none';
+  document.getElementById('btnNextQ').style.display = 'none';
+  state.quizAnswered = false;
+}
+
+function answerQuiz(idx) {
+  if (state.quizAnswered) return;
+  state.quizAnswered = true;
+  const q = quizQuestions[state.quizIndex];
+  for (let i=0;i<q.opts.length;i++) {
+    const el = document.getElementById('qopt-'+i);
+    if (el) {
+      el.classList.remove('correct','wrong');
+      if (i === q.correct) el.classList.add('correct');
+      else if (i === idx && idx !== q.correct) el.classList.add('wrong');
+      el.setAttribute('aria-checked', i===idx ? 'true':'false');
+    }
+  }
+  const feedback = document.getElementById('qFeedback');
+  const isCorrect = idx === q.correct;
+  feedback.style.display = 'block';
+  feedback.innerHTML = `
+    <div class="card" style="background:${isCorrect?'var(--green-bg)':'var(--red-bg)'};border-color:${isCorrect?'#C0DD97':'#F5AAAA'};margin-top:8px">
+      <div style="font-size:12px;color:${isCorrect?'var(--green)':'var(--red)'};font-weight:600;margin-bottom:3px">
+        ${isCorrect ? '✅ Correto! +10 XP' : '❌ Não dessa vez'}
+      </div>
+      <div style="font-size:11px;color:var(--text2)">${q.feedback}</div>
+    </div>`;
+  if (isCorrect) { state.user.xp += 10; }
+  document.getElementById('btnNextQ').style.display = 'flex';
+  document.getElementById('btnNextQ').setAttribute('aria-label', state.quizIndex < quizQuestions.length-1 ? 'Próxima questão' : 'Finalizar quiz');
+}
+
+function nextQuestion() {
+  if (state.quizIndex < quizQuestions.length - 1) {
+    state.quizIndex++;
+    renderQuizQuestion();
+  } else {
+    showToast('Quiz concluído! +50 XP 🎉', 'green');
+    state.user.xp += 50;
+    state.quizIndex = 0;
+    setTimeout(renderQuizQuestion, 1500);
+  }
+}
+
+// ==================== MODALS ====================
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (m) { m.classList.add('open'); m.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (m) { m.classList.remove('open'); m.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+}
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+});
+
+function setModalTab(type) {
+  ['rec','dep'].forEach(t => {
+    const tab = document.getElementById('mt-tab-'+t);
+    if (tab) tab.classList.toggle('active', t===type);
+  });
+  const catSel = document.getElementById('mt-cat');
+  if (type === 'rec') {
+    catSel.innerHTML = '<option>Salário</option><option>Estágio</option><option>Bolsa</option><option>Freelance</option><option>Presente</option><option>Outro</option>';
+  } else {
+    catSel.innerHTML = '<option>Alimentação</option><option>Transporte</option><option>Lazer</option><option>Saúde</option><option>Moradia</option><option>Educação</option><option>Streaming</option><option>Outro</option>';
+  }
+}
+
+// ==================== NOTIFICATIONS ====================
+function toggleNotif() {
+  const panel = document.getElementById('notifPanel');
+  const overlay = document.getElementById('notifOverlay');
+  const btn = document.getElementById('btnNotif');
+  const isOpen = panel.classList.toggle('open');
+  overlay.classList.toggle('open', isOpen);
+  btn.setAttribute('aria-expanded', isOpen);
+  panel.setAttribute('aria-hidden', !isOpen);
+}
+
+// ==================== INVEST ====================
+function toggleInvest(id) {
+  const panel = document.getElementById(id);
+  const btn = document.getElementById('inv-btn-'+id.replace('inv-',''));
+  if (!panel) return;
+  const isOpen = panel.classList.toggle('open');
+  const btnEl = document.querySelector(`[onclick="toggleInvest('${id}')"]`);
+  if (btnEl) btnEl.setAttribute('aria-expanded', isOpen);
+}
+
+// ==================== LIBRAS / ACCESSIBILITY ====================
+function toggleLibras() {
+  const panel = document.getElementById('librasPanel');
+  const btn = document.getElementById('librasBtn');
+  const isOpen = panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen);
+  panel.setAttribute('aria-hidden', !isOpen);
+}
+
+function openLibrasGuide() {
+  showToast('🤟 Guia em Libras disponível em breve!', '');
+  toggleLibras();
+}
+
+function readPage() {
+  const activePage = document.querySelector('.page.active');
+  if (activePage && window.speechSynthesis) {
+    const text = activePage.innerText.replace(/\n+/g,' ').substring(0,500);
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'pt-BR';
+    utter.rate = 0.9;
+    window.speechSynthesis.speak(utter);
+    showToast('🔊 Lendo a página...', '');
+  } else {
+    showToast('Síntese de voz não disponível', 'red');
+  }
+  toggleLibras();
+}
+
+let highContrast = false, largeText = false, reduceMotion = false;
+function toggleHighContrast(val) {
+  highContrast = val !== undefined ? val : !highContrast;
+  document.body.classList.toggle('high-contrast', highContrast);
+  const tog = document.getElementById('togHighContrast');
+  if (tog) tog.checked = highContrast;
+}
+function toggleLargeText(val) {
+  largeText = val !== undefined ? val : !largeText;
+  document.body.classList.toggle('large-text', largeText);
+  const tog = document.getElementById('togLargeText');
+  if (tog) tog.checked = largeText;
+}
+function toggleReduceMotion(val) {
+  reduceMotion = val !== undefined ? val : !reduceMotion;
+  document.body.classList.toggle('reduce-motion', reduceMotion);
+  const tog = document.getElementById('togReduceMotion');
+  if (tog) tog.checked = reduceMotion;
+}
+
+// Keyboard shortcut Alt+A for accessibility
+document.addEventListener('keydown', e => {
+  if (e.altKey && e.key === 'a') { e.preventDefault(); toggleLibras(); }
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
+    const np = document.getElementById('notifPanel');
+    if (np && np.classList.contains('open')) toggleNotif();
+  }
+});
+
+// ==================== PROFILE ====================
+function savePerfil() {
+  const name = document.getElementById('prf-nome').value.trim();
+  if (!name) { showToast('Nome não pode estar vazio', 'red'); return; }
+  state.user.name = name;
+  const initials = name.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+  state.user.initials = initials;
+  document.getElementById('sidebarName').textContent = name;
+  document.getElementById('profileAvatarText').textContent = initials;
+  document.getElementById('sidebarAvatar').textContent = initials;
+  showToast('Perfil atualizado! ✓', 'green');
+}
+
+function handleAvatarUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const url = e.target.result;
+    state.user.avatarUrl = url;
+    document.getElementById('profileAvatarText').style.display='none';
+    const img = document.getElementById('profileAvatarImg');
+    img.src = url; img.style.display='block';
+    img.alt = `Foto de perfil de ${state.user.name}`;
+    document.getElementById('sidebarAvatar').innerHTML = `<img src="${url}" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+    document.getElementById('gameAvatar').innerHTML = `<img src="${url}" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+    showToast('Foto atualizada!', 'green');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ==================== TOAST ====================
+function showToast(msg, type='') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast${type?` toast-${type}`:''}`;
+  toast.setAttribute('role','alert');
+  toast.setAttribute('aria-live','assertive');
+  toast.innerHTML = `<i class="ti ti-${type==='green'?'check':'info-circle'}" aria-hidden="true"></i> ${msg}`;
+  container.appendChild(toast);
+  requestAnimationFrame(() => { requestAnimationFrame(() => { toast.classList.add('show'); }); });
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
+}
+
+// ==================== INIT ====================
+window.addEventListener('DOMContentLoaded', () => {
+  // Set today for demo login
+  const today = new Date().toISOString().split('T')[0];
+  ['rec-data','dep-data'].forEach(id => { const el=document.getElementById(id); if(el) el.value=today; });
+  // Demo: auto-login for preview
+  // initApp(); showScreen('screen-app');
+});
+</script>
+<!-- API integration (conecta ao backend C# — carregado após o app JS) -->
+<!-- Em produção: copie meu_dindin.html para wwwroot/ e o api.js já estará na mesma pasta -->
+<script>
+// Stub para quando api.js NÃO está presente (modo demo offline)
+if (typeof confirmarAporte === 'undefined') {
+  window.confirmarAporte = function() {
+    closeModal('modalAporte');
+    showToast('Aporte realizado com sucesso! +50 XP 🎉', 'green');
+  };
+}
+</script>
+</body>
+</html>
