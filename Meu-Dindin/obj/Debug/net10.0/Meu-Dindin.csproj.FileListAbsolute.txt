@@ -102,3 +102,5 @@
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/m82wpuirqx-{0}-85dk12kazn-85dk12kazn.gz
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/odepnnr36o-{0}-qxxzxfrnp3-qxxzxfrnp3.gz
 /workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/compressed/xnlmgvd5s2-{0}-uvfcrfwijb-uvfcrfwijb.gz
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/Meu-Dindin.csproj.AssemblyReference.cache
+/workspaces/Meu-DinDin/Meu-Dindin/obj/Debug/net10.0/Meu-Dindin.MvcApplicationPartsAssemblyInfo.cs

@@ -1,6 +1,6 @@
 # Build results
-[Bb]in/
-[Oo]bj/
+*bin/
+*obj/
 
 # Visual Studio
 .vs/
