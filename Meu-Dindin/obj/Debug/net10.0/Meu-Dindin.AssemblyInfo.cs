@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Meu-Dindin")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce8c8621b2ce78aad474a1cf784196f315c3259f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c3b078e87ea0e770caf15e786d119e5a4b86aebb")]
 [assembly: System.Reflection.AssemblyProductAttribute("Meu-Dindin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Meu-Dindin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
