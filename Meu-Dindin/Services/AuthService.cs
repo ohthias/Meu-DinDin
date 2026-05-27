@@ -3,145 +3,111 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Meu_Dindin.Data;
-using Meu_Dindin.DTOs;
-using Meu_Dindin.Models;
+using MeuDinDin.Data;
+using MeuDinDin.DTOs;
+using MeuDinDin.Models;
 
-namespace Meu_Dindin.Services;
+namespace MeuDinDin.Services;
 
 public class AuthService(AppDbContext db, IConfiguration config)
 {
-    // ── Níveis de XP ─────────────────────────────────────────────────────────
-    private static readonly int[] XpPorNivel = [0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5200, 6600];
-    private static readonly string[] Titulos  = ["Novato","Poupador","Economizador","Planejador","Financista","Gestor","Economista","Investidor","Especialista","Guru","Mestre DinDin"];
+    private static readonly int[]    XpPorNivel = [0,100,300,600,1000,1500,2200,3000,4000,5200,6600];
+    private static readonly string[] Titulos    = ["Novato","Poupador","Economizador","Planejador","Financista","Gestor","Economista","Investidor","Especialista","Guru","Mestre DinDin"];
 
-    // ── Registrar ─────────────────────────────────────────────────────────────
     public async Task<(bool Ok, string Erro, AuthResponse? Resp)> RegistrarAsync(RegisterRequest req)
     {
-        if (await db.Usuarios.AnyAsync(u => u.Email == req.Email))
+        if (await db.Usuarios.AnyAsync(u => u.Email == req.Email.Trim().ToLower()))
             return (false, "E-mail já cadastrado.", null);
 
         var usuario = new Usuario
         {
-            Nome      = req.Nome.Trim(),
-            Email     = req.Email.Trim().ToLower(),
-            SenhaHash = BCrypt.Net.BCrypt.HashPassword(req.Senha)
+            Nome            = req.Nome.Trim(),
+            Email           = req.Email.Trim().ToLower(),
+            SenhaHash       = BCrypt.Net.BCrypt.HashPassword(req.Senha),
+            DataNascimento  = req.DataNascimento.Date,
+            SaldoConta      = 0
         };
-
         db.Usuarios.Add(usuario);
         await db.SaveChangesAsync();
 
-        var token = GerarToken(usuario);
-        return (true, string.Empty, MontarAuthResponse(usuario, token, onboardingCompleto: false));
+        // Notificação de boas-vindas
+        db.Notificacoes.Add(new Notificacao
+        {
+            UsuarioId = usuario.Id,
+            Titulo    = "Bem-vindo ao Meu DinDin! 🎉",
+            Mensagem  = $"Olá {usuario.Nome.Split(' ')[0]}! Complete o questionário para personalizarmos sua experiência.",
+            Tipo      = "info", Icone = "🎉"
+        });
+        await db.SaveChangesAsync();
+
+        return (true, string.Empty, await MontarAuthResponseAsync(usuario, GerarToken(usuario), false));
     }
 
-    // ── Login ─────────────────────────────────────────────────────────────────
     public async Task<(bool Ok, string Erro, AuthResponse? Resp)> LoginAsync(LoginRequest req)
     {
-        var usuario = await db.Usuarios
-            .FirstOrDefaultAsync(u => u.Email == req.Email.Trim().ToLower());
-
+        var usuario = await db.Usuarios.FirstOrDefaultAsync(u => u.Email == req.Email.Trim().ToLower());
         if (usuario is null || !BCrypt.Net.BCrypt.Verify(req.Senha, usuario.SenhaHash))
             return (false, "E-mail ou senha incorretos.", null);
 
-        var onboardingCompleto = await db.OnboardingRespostas
-            .AnyAsync(o => o.UsuarioId == usuario.Id);
-
-        var token = GerarToken(usuario);
-        return (true, string.Empty, MontarAuthResponse(usuario, token, onboardingCompleto));
+        var onboardingCompleto = await db.OnboardingRespostas.AnyAsync(o => o.UsuarioId == usuario.Id);
+        return (true, string.Empty, await MontarAuthResponseAsync(usuario, GerarToken(usuario), onboardingCompleto));
     }
 
-    // ── Salvar onboarding e adaptar perfil ────────────────────────────────────
     public async Task SalvarOnboardingAsync(int usuarioId, OnboardingRequest req)
     {
-        // Remove respostas antigas (se refizer)
         var antigas = db.OnboardingRespostas.Where(o => o.UsuarioId == usuarioId);
         db.OnboardingRespostas.RemoveRange(antigas);
 
-        var novas = req.Respostas.Select(r => new OnboardingResposta
+        db.OnboardingRespostas.AddRange(req.Respostas.Select(r => new OnboardingResposta
         {
-            UsuarioId     = usuarioId,
-            PerguntaIndex = r.PerguntaIndex,
-            RespostaIndex = r.RespostaIndex,
-            RespostaTexto = r.RespostaTexto
-        });
-        db.OnboardingRespostas.AddRange(novas);
+            UsuarioId = usuarioId, PerguntaIndex = r.PerguntaIndex,
+            RespostaIndex = r.RespostaIndex, RespostaTexto = r.RespostaTexto
+        }));
 
-        // Adaptar perfil
         var usuario = await db.Usuarios.FindAsync(usuarioId);
         if (usuario is null) { await db.SaveChangesAsync(); return; }
 
-        var respostas = req.Respostas.ToDictionary(r => r.PerguntaIndex, r => r.RespostaIndex);
+        var m = req.Respostas.ToDictionary(r => r.PerguntaIndex, r => r.RespostaIndex);
+        usuario.FonteRenda        = m.GetValueOrDefault(0) switch { 0=>"Bolsa/Estágio",1=>"CLT",2=>"Freelance",3=>"Familiar",_=>"Não informado" };
+        usuario.DesafioFinanceiro = m.GetValueOrDefault(1) switch { 0=>"Gastar mais do que ganha",1=>"Não consegue poupar",2=>"Não sabe investir",3=>"Dívidas",_=>"Não informado" };
+        usuario.ObjetivoFinanceiro= m.GetValueOrDefault(2) switch { 0=>"Reserva de emergência",1=>"Viagem/Compra",2=>"Investir",3=>"Quitar dívidas",_=>"Não informado" };
+        int exp = m.GetValueOrDefault(3);
+        usuario.PerfilInvestidor  = exp switch { 0 or 1=>"Conservador",2=>"Moderado",3=>"Arrojado",_=>"Conservador" };
+        usuario.NivelExperiencia  = exp switch { 0 or 1=>"Iniciante",2=>"Intermediário",3=>"Avançado",_=>"Iniciante" };
+        usuario.PorcentagemPoupanca = m.GetValueOrDefault(4) switch { 0=>3,1=>7,2=>15,3=>25,_=>5 };
+        usuario.AltoContraste     = m.GetValueOrDefault(5) == 0;
+        usuario.TextoGrande       = m.GetValueOrDefault(5) == 1;
+        usuario.PreferenciaLibras = m.GetValueOrDefault(5) == 2;
 
-        // P0 = Fonte de renda
-        usuario.FonteRenda = respostas.GetValueOrDefault(0) switch
+        await db.SaveChangesAsync();
+
+        // Notificação de onboarding concluído
+        db.Notificacoes.Add(new Notificacao
         {
-            0 => "Bolsa/Estágio",
-            1 => "CLT",
-            2 => "Freelance",
-            3 => "Familiar",
-            _ => "Não informado"
-        };
-
-        // P1 = Desafio financeiro
-        usuario.DesafioFinanceiro = respostas.GetValueOrDefault(1) switch
-        {
-            0 => "Gastar mais do que ganha",
-            1 => "Não consegue poupar",
-            2 => "Não sabe investir",
-            3 => "Dívidas",
-            _ => "Não informado"
-        };
-
-        // P2 = Objetivo
-        usuario.ObjetivoFinanceiro = respostas.GetValueOrDefault(2) switch
-        {
-            0 => "Reserva de emergência",
-            1 => "Viagem/Compra",
-            2 => "Investir",
-            3 => "Quitar dívidas",
-            _ => "Não informado"
-        };
-
-        // P3 = Experiência em investimentos
-        int expIdx = respostas.GetValueOrDefault(3);
-        usuario.PerfilInvestidor = expIdx switch { 0 or 1 => "Conservador", 2 => "Moderado", 3 => "Arrojado", _ => "Conservador" };
-        usuario.NivelExperiencia = expIdx switch { 0 or 1 => "Iniciante", 2 => "Intermediário", 3 => "Avançado", _ => "Iniciante" };
-
-        // P4 = % poupada
-        usuario.PorcentagemPoupanca = respostas.GetValueOrDefault(4) switch
-        {
-            0 => 3, 1 => 7, 2 => 15, 3 => 25, _ => 5
-        };
-
-        // P5 = Acessibilidade
-        usuario.AltoContraste     = respostas.GetValueOrDefault(5) == 0;
-        usuario.TextoGrande       = respostas.GetValueOrDefault(5) == 1;
-        usuario.PreferenciaLibras = respostas.GetValueOrDefault(5) == 2;
-
+            UsuarioId = usuarioId, Titulo = "Perfil configurado! 🎯",
+            Mensagem  = "Seu perfil foi personalizado. Confira as recomendações no dashboard.",
+            Tipo = "conquista", Icone = "🎯"
+        });
         await db.SaveChangesAsync();
     }
 
-    // ── Atualizar perfil ──────────────────────────────────────────────────────
     public async Task<(bool Ok, string Erro)> AtualizarPerfilAsync(int usuarioId, AtualizarPerfilRequest req)
     {
         var usuario = await db.Usuarios.FindAsync(usuarioId);
         if (usuario is null) return (false, "Usuário não encontrado.");
-
         if (!string.IsNullOrWhiteSpace(req.Email) && req.Email != usuario.Email)
         {
             if (await db.Usuarios.AnyAsync(u => u.Email == req.Email && u.Id != usuarioId))
                 return (false, "E-mail já está em uso.");
             usuario.Email = req.Email.Trim().ToLower();
         }
-
         usuario.Nome             = req.Nome.Trim();
         usuario.FotoUrl          = req.FotoUrl;
+        usuario.DataNascimento   = req.DataNascimento;
         usuario.AltoContraste    = req.AltoContraste;
         usuario.TextoGrande      = req.TextoGrande;
         usuario.ReduzirAnimacoes = req.ReduzirAnimacoes;
-        usuario.PreferenciaLibras = req.PreferenciaLibras;
-
+        usuario.PreferenciaLibras= req.PreferenciaLibras;
         await db.SaveChangesAsync();
         return (true, string.Empty);
     }
@@ -150,9 +116,7 @@ public class AuthService(AppDbContext db, IConfiguration config)
     {
         var usuario = await db.Usuarios.FindAsync(usuarioId);
         if (usuario is null) return (false, "Usuário não encontrado.");
-        if (!BCrypt.Net.BCrypt.Verify(req.SenhaAtual, usuario.SenhaHash))
-            return (false, "Senha atual incorreta.");
-
+        if (!BCrypt.Net.BCrypt.Verify(req.SenhaAtual, usuario.SenhaHash)) return (false, "Senha atual incorreta.");
         usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(req.NovaSenha);
         await db.SaveChangesAsync();
         return (true, string.Empty);
@@ -162,13 +126,15 @@ public class AuthService(AppDbContext db, IConfiguration config)
     {
         var u = await db.Usuarios.FindAsync(usuarioId);
         if (u is null) return null;
-        return new PerfilResponse(u.Id, u.Nome, u.Email, u.FotoUrl, u.Nivel, u.XP, u.Moedas,
-            u.NomeTitulo, u.PerfilInvestidor, u.NivelExperiencia, u.ObjetivoFinanceiro,
-            u.DesafioFinanceiro, u.FonteRenda, u.AltoContraste, u.TextoGrande,
+        int nivelIdx = Math.Min(u.Nivel - 1, XpPorNivel.Length - 1);
+        int xpProx   = nivelIdx + 1 < XpPorNivel.Length ? XpPorNivel[nivelIdx + 1] : XpPorNivel[^1];
+        return new PerfilResponse(u.Id, u.Nome, u.Email, u.FotoUrl, u.DataNascimento, u.SaldoConta,
+            u.Nivel, u.XP, xpProx, u.Moedas, u.NomeTitulo, u.PerfilInvestidor, u.NivelExperiencia,
+            u.ObjetivoFinanceiro, u.DesafioFinanceiro, u.FonteRenda, u.ScoreFinanceiro,
+            u.CategoriaPerfil, u.ItensResgatados, u.AltoContraste, u.TextoGrande,
             u.ReduzirAnimacoes, u.PreferenciaLibras);
     }
 
-    // ── XP / Nível ────────────────────────────────────────────────────────────
     public static void AdicionarXP(Usuario usuario, int xp)
     {
         usuario.XP += xp;
@@ -176,32 +142,36 @@ public class AuthService(AppDbContext db, IConfiguration config)
         {
             if (usuario.XP >= XpPorNivel[i])
             {
-                usuario.Nivel     = i + 1;
+                usuario.Nivel      = i + 1;
                 usuario.NomeTitulo = i < Titulos.Length ? Titulos[i] : Titulos[^1];
                 break;
             }
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
     private string GerarToken(Usuario usuario)
     {
-        var key     = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
-        var creds   = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var claims  = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-            new Claim(ClaimTypes.Name,  usuario.Nome),
-            new Claim(ClaimTypes.Email, usuario.Email),
-        };
-        var jwt = new JwtSecurityToken(
-            claims:   claims,
-            expires:  DateTime.UtcNow.AddDays(30),
+        var key   = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var jwt   = new JwtSecurityToken(
+            claims: [
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim(ClaimTypes.Name,  usuario.Nome),
+                new Claim(ClaimTypes.Email, usuario.Email)
+            ],
+            expires: DateTime.UtcNow.AddDays(30),
             signingCredentials: creds);
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
-    private static AuthResponse MontarAuthResponse(Usuario u, string token, bool onboardingCompleto) =>
-        new(token, u.Id, u.Nome, u.Email, u.Nivel, u.XP, u.Moedas,
-            u.PerfilInvestidor, onboardingCompleto, u.AltoContraste, u.TextoGrande, u.ReduzirAnimacoes);
+    private async Task<AuthResponse> MontarAuthResponseAsync(Usuario u, string token, bool onboardingCompleto)
+    {
+        int nivelIdx = Math.Min(u.Nivel - 1, XpPorNivel.Length - 1);
+        _ = nivelIdx; // used for future
+        return new AuthResponse(token, u.Id, u.Nome, u.Email, u.FotoUrl, u.DataNascimento,
+            u.SaldoConta, u.Nivel, u.XP, u.Moedas, u.NomeTitulo, u.PerfilInvestidor,
+            u.NivelExperiencia, u.ObjetivoFinanceiro, u.DesafioFinanceiro, u.FonteRenda,
+            u.ScoreFinanceiro, u.CategoriaPerfil, u.ItensResgatados,
+            onboardingCompleto, u.AltoContraste, u.TextoGrande, u.ReduzirAnimacoes, u.PreferenciaLibras);
+    }
 }

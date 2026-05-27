@@ -1,8 +1,8 @@
 using System.Security.Claims;
-using Meu_Dindin.DTOs;
-using Meu_Dindin.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MeuDinDin.DTOs;
+using MeuDinDin.Services;
 
 namespace MeuDinDin.Controllers;
 
