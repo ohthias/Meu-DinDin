@@ -1,0 +1,772 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Meu DinDin — API de análise",
+    "version": "v1",
+    "description": "Instantâneo do contrato publicado em /swagger/v1/swagger.json pela API (api/MeuDinDin.Api). Atualize com `npm run gerar:api:vivo` no web/ com a API rodando."
+  },
+  "paths": {
+    "/api/v1/indicadores": {
+      "get": {
+        "tags": [
+          "Indicadores"
+        ],
+        "summary": "Selic, CDI e IPCA em 12 meses",
+        "operationId": "ObterIndicadores",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndicadoresDto"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/investimentos/carteira": {
+      "get": {
+        "tags": [
+          "Investimentos"
+        ],
+        "summary": "Carteira com valores estimados até hoje",
+        "operationId": "ObterCarteira",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CarteiraDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido"
+          }
+        }
+      }
+    },
+    "/api/v1/investimentos/simular": {
+      "post": {
+        "tags": [
+          "Investimentos"
+        ],
+        "summary": "Quanto investir por mês para chegar a um valor",
+        "operationId": "SimularObjetivo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulacaoRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulacaoDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido"
+          }
+        }
+      }
+    },
+    "/api/v1/analise/saude": {
+      "get": {
+        "tags": [
+          "Análise"
+        ],
+        "summary": "Pontuação de saúde financeira (0–100)",
+        "operationId": "ObterSaudeFinanceira",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaudeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido"
+          }
+        }
+      }
+    },
+    "/api/v1/analise/previsao": {
+      "get": {
+        "tags": [
+          "Análise"
+        ],
+        "summary": "Previsão de gastos do próximo mês",
+        "operationId": "PreverGastos",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrevisaoDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido"
+          }
+        }
+      }
+    },
+    "/api/v1/extratos/exportar": {
+      "get": {
+        "tags": [
+          "Extratos"
+        ],
+        "summary": "Exporta o extrato em CSV ou OFX",
+        "operationId": "ExportarExtrato",
+        "parameters": [
+          {
+            "name": "formato",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/FormatoExtrato"
+            }
+          },
+          {
+            "name": "de",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "ate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "contaId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/x-ofx": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente ou inválido"
+          },
+          "429": {
+            "description": "Limite de exportações atingido (20 por hora)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Verifica se a API está no ar",
+        "operationId": "Health",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IndicadoresDto": {
+        "type": "object",
+        "properties": {
+          "selic": {
+            "type": "number",
+            "format": "double",
+            "description": "Meta Selic definida pelo Copom, % ao ano."
+          },
+          "cdi": {
+            "type": "number",
+            "format": "double",
+            "description": "CDI anualizado (base 252), % ao ano."
+          },
+          "ipca12m": {
+            "type": "number",
+            "format": "double",
+            "description": "IPCA acumulado nos últimos 12 meses, %."
+          },
+          "dataReferencia": {
+            "type": "string",
+            "format": "date"
+          },
+          "fonte": {
+            "type": "string",
+            "description": "\"banco-central\" ou \"referencia\""
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "selic",
+          "cdi",
+          "ipca12m",
+          "dataReferencia",
+          "fonte"
+        ],
+        "description": "Taxas usadas nos cálculos de investimento."
+      },
+      "TipoProduto": {
+        "type": "string",
+        "enum": [
+          "Poupanca",
+          "TesouroSelic",
+          "TesouroPrefixado",
+          "TesouroIPCA",
+          "CDB",
+          "LCI",
+          "LCA"
+        ]
+      },
+      "Indexador": {
+        "type": "string",
+        "enum": [
+          "pos_cdi",
+          "pre",
+          "ipca",
+          "selic",
+          "poupanca"
+        ]
+      },
+      "Classe": {
+        "type": "string",
+        "enum": [
+          "PosFixado",
+          "Inflacao",
+          "Prefixado"
+        ]
+      },
+      "PosicaoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoProduto"
+          },
+          "produto": {
+            "type": "string"
+          },
+          "emissor": {
+            "type": "string"
+          },
+          "indexador": {
+            "$ref": "#/components/schemas/Indexador"
+          },
+          "taxa": {
+            "type": "number",
+            "format": "double"
+          },
+          "classe": {
+            "$ref": "#/components/schemas/Classe"
+          },
+          "aplicado": {
+            "type": "number",
+            "format": "double"
+          },
+          "bruto": {
+            "type": "number",
+            "format": "double"
+          },
+          "rendimento": {
+            "type": "number",
+            "format": "double"
+          },
+          "impostoRenda": {
+            "type": "number",
+            "format": "double"
+          },
+          "liquido": {
+            "type": "number",
+            "format": "double"
+          },
+          "dias": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "taxaAnualEfetiva": {
+            "type": "number",
+            "format": "double"
+          },
+          "vencimento": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "liquidezDiaria": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tipo",
+          "produto",
+          "emissor",
+          "indexador",
+          "taxa",
+          "classe",
+          "aplicado",
+          "bruto",
+          "rendimento",
+          "impostoRenda",
+          "liquido",
+          "dias",
+          "taxaAnualEfetiva",
+          "vencimento",
+          "liquidezDiaria"
+        ],
+        "description": "Uma aplicação com valores estimados até hoje."
+      },
+      "AlocacaoDto": {
+        "type": "object",
+        "properties": {
+          "classe": {
+            "$ref": "#/components/schemas/Classe"
+          },
+          "valor": {
+            "type": "number",
+            "format": "double"
+          },
+          "percentual": {
+            "type": "number",
+            "format": "double"
+          },
+          "referencia": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "classe",
+          "valor",
+          "percentual",
+          "referencia"
+        ]
+      },
+      "CarteiraDto": {
+        "type": "object",
+        "properties": {
+          "indicadores": {
+            "$ref": "#/components/schemas/IndicadoresDto"
+          },
+          "perfil": {
+            "type": "string"
+          },
+          "totalAplicado": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalLiquido": {
+            "type": "number",
+            "format": "double"
+          },
+          "rendimentoLiquido": {
+            "type": "number",
+            "format": "double"
+          },
+          "posicoes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PosicaoDto"
+            }
+          },
+          "alocacao": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AlocacaoDto"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "indicadores",
+          "perfil",
+          "totalAplicado",
+          "totalBruto",
+          "totalLiquido",
+          "rendimentoLiquido",
+          "posicoes",
+          "alocacao"
+        ]
+      },
+      "ProdutoSimulado": {
+        "type": "object",
+        "properties": {
+          "tipo": {
+            "$ref": "#/components/schemas/TipoProduto"
+          },
+          "taxa": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "tipo"
+        ]
+      },
+      "SimulacaoRequest": {
+        "type": "object",
+        "properties": {
+          "alvo": {
+            "type": "number",
+            "format": "double",
+            "description": "Valor que você quer ter, líquido de IR (R$)."
+          },
+          "meses": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Prazo em meses (1 a 480)."
+          },
+          "inicial": {
+            "type": "number",
+            "format": "double"
+          },
+          "produtos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProdutoSimulado"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "alvo",
+          "meses",
+          "inicial"
+        ]
+      },
+      "ResultadoObjetivoDto": {
+        "type": "object",
+        "properties": {
+          "tipo": {
+            "$ref": "#/components/schemas/TipoProduto"
+          },
+          "produto": {
+            "type": "string"
+          },
+          "taxa": {
+            "type": "number",
+            "format": "double"
+          },
+          "aporteMensal": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalAportado": {
+            "type": "number",
+            "format": "double"
+          },
+          "rendimentoLiquido": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxaAnualEfetiva": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "tipo",
+          "produto",
+          "taxa",
+          "aporteMensal",
+          "totalAportado",
+          "rendimentoLiquido",
+          "taxaAnualEfetiva"
+        ]
+      },
+      "SimulacaoDto": {
+        "type": "object",
+        "properties": {
+          "indicadores": {
+            "$ref": "#/components/schemas/IndicadoresDto"
+          },
+          "resultados": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResultadoObjetivoDto"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "indicadores",
+          "resultados"
+        ]
+      },
+      "ComponenteDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "pontos": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maximo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detalhe": {
+            "type": "string"
+          },
+          "dica": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "nome",
+          "pontos",
+          "maximo",
+          "detalhe",
+          "dica"
+        ]
+      },
+      "SaudeDto": {
+        "type": "object",
+        "properties": {
+          "pontuacao": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "faixa": {
+            "type": "string"
+          },
+          "componentes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponenteDto"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "pontuacao",
+          "faixa",
+          "componentes"
+        ],
+        "description": "Pontuação de saúde financeira de 0 a 100."
+      },
+      "PrevisaoCategoriaDto": {
+        "type": "object",
+        "properties": {
+          "categoria": {
+            "type": "string"
+          },
+          "previsto": {
+            "type": "number",
+            "format": "double"
+          },
+          "minimo": {
+            "type": "number",
+            "format": "double"
+          },
+          "maximo": {
+            "type": "number",
+            "format": "double"
+          },
+          "media": {
+            "type": "number",
+            "format": "double"
+          },
+          "historico": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "categoria",
+          "previsto",
+          "minimo",
+          "maximo",
+          "media",
+          "historico"
+        ]
+      },
+      "PrevisaoDto": {
+        "type": "object",
+        "properties": {
+          "meses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "total": {
+            "$ref": "#/components/schemas/PrevisaoCategoriaDto"
+          },
+          "categorias": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrevisaoCategoriaDto"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "meses",
+          "total",
+          "categorias"
+        ]
+      },
+      "FormatoExtrato": {
+        "type": "string",
+        "enum": [
+          "csv",
+          "ofx"
+        ]
+      },
+      "HttpValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": {}
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Token de acesso do Supabase Auth"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}
