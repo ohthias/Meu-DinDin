@@ -1,0 +1,27 @@
+project_id = "meu-dindin"
+
+[api]
+port = 54321
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+port = 54323
+
+[auth]
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173"]
+
+[auth.email]
+enable_confirmations = false
+
+[functions.open-finance]
+verify_jwt = true
+
+[functions.open-finance-webhook]
+verify_jwt = false
+
+[functions.minha-conta]
+verify_jwt = true
