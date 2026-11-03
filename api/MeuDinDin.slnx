@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MeuDinDin.Api/MeuDinDin.Api.csproj" />
+  <Project Path="MeuDinDin.Api.Tests/MeuDinDin.Api.Tests.csproj" />
+</Solution>

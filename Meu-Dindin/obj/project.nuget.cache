@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "lUgf8iXpxjE=",
+  "dgSpecHash": "TlSUTyBijko=",
   "success": true,
   "projectFilePath": "/workspaces/Meu-DinDin/Meu-Dindin/Meu-Dindin.csproj",
   "expectedPackageFiles": [
@@ -66,9 +66,9 @@
     "/home/codespace/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "/home/codespace/.nuget/packages/system.text.json/9.0.0/system.text.json.9.0.0.nupkg.sha512",
     "/home/codespace/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512",
-    "/home/codespace/.nuget/packages/microsoft.netcore.app.ref/9.0.14/microsoft.netcore.app.ref.9.0.14.nupkg.sha512",
-    "/home/codespace/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.14/microsoft.aspnetcore.app.ref.9.0.14.nupkg.sha512",
-    "/home/codespace/.nuget/packages/microsoft.netcore.app.host.linux-x64/9.0.14/microsoft.netcore.app.host.linux-x64.9.0.14.nupkg.sha512"
+    "/home/codespace/.nuget/packages/microsoft.netcore.app.ref/9.0.22/microsoft.netcore.app.ref.9.0.22.nupkg.sha512",
+    "/home/codespace/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.22/microsoft.aspnetcore.app.ref.9.0.22.nupkg.sha512",
+    "/home/codespace/.nuget/packages/microsoft.netcore.app.host.linux-x64/9.0.22/microsoft.netcore.app.host.linux-x64.9.0.22.nupkg.sha512"
   ],
   "logs": []
 }
